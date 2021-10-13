@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["@babel/env", {
+      "targets": {
+        "ie": "11"
+      },
+      "useBuiltIns": "usage",
+      "corejs": "3",
+      "shippedProposals": true
+    }]
+  ],
+  "plugins": [
+    ["@babel/transform-runtime", {
+      "corejs": 3
+    }]
+  ]
+}

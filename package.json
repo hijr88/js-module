@@ -1,0 +1,38 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --env=production",
+    "watch": "webpack -w --env=development",
+    "dev": "webpack serve --env=development"
+  },
+  "keywords": [],
+  "author": "yh",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.6",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^6.3.0",
+    "dayjs": "^1.10.7",
+    "element-remove": "^1.0.4",
+    "events-polyfill": "^2.1.2",
+    "js-datepicker": "^5.18.0",
+    "sass": "^1.42.1",
+    "sass-loader": "^12.1.0",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.57.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.3.1",
+    "whatwg-fetch": "^3.6.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.15.4",
+    "@babel/runtime-corejs3": "^7.15.4",
+    "core-js": "^3.18.2"
+  }
+}
