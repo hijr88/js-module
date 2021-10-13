@@ -57,27 +57,25 @@ export function changeAllCheckBox(allCheckBox, area) {
  * 폼 서브밋 방지
  * @param {HTMLFormElement} form
  */
-export function preventSubmitForm(...form) {
-    form.forEach(f => f.addEventListener('submit', function (e){
+export function preventSubmitForm(form) {
+    form.addEventListener('submit', function (e){
         e.preventDefault();
-    }))
+    })
 }
 
 /**
  * 입력 못하게 막기
  * @param {HTMLInputElement} input 입력할 수 있는 엘리먼트 ex) input, textArea
  */
-export function preventInput(...input) {
+export function preventInput(input) {
     function focus(e) {
         e.target.blur();
     }
     function paste(e) {
         e.preventDefault();
     }
-    input.forEach(i => {
-        i.addEventListener('focus', focus);
-        i.addEventListener('paste', paste);
-    })
+    input.addEventListener('focus', focus);
+    input.addEventListener('paste', paste);
 }
 
 /** 입력한 글자수만큼 (? / max) 숫자 변화 이벤트 */
