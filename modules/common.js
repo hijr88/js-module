@@ -49,32 +49,47 @@ export function nvl(value, defaultValue = '') {
 
 /**
  * 팝업창 가운데에서 열기
- * @param {HTMLElement || String} element
+ * @param {HTMLElement || String} pop
  * @param showDark 어두운 배경 키기
  */
-export function openPopup(element, showDark = true) {
+export function openPopup(pop, showDark = true) {
     //#layerMask {z-index:300; display:none; position:fixed; top: 0; width:100%; height:100%; background-color: rgba(0,0,0,0.7);}
-    element = parseElement(element);
+    pop = parseElement(pop);
     if (showDark) document.querySelector('#layerMask').style.display = 'block';
 
-    element.style.position = 'fixed';
-    element.style.display = 'block';
-    element.style.marginTop = `-${element.offsetHeight/2}px`;
-    element.style.marginLeft = `-${element.offsetWidth/2}px`;
-    element.style.top = '50%';
-    element.style.left = '50%';
-    element.style.zIndex = '999';
+    pop.style.position = 'fixed';
+    pop.style.display = 'block';
+    pop.style.marginTop = `-${pop.offsetHeight/2}px`;
+    pop.style.marginLeft = `-${pop.offsetWidth/2}px`;
+    pop.style.top = '50%';
+    pop.style.left = '50%';
+    pop.style.zIndex = '999';
 }
 
 /**
  * 팝업창 닫기
- * @param {HTMLElement || String} element
+ * @param {HTMLElement || String} pop 팝업
  * @param hideDark 어두운 배경 끄기
+ * @param clear 팝업 입력값 초기화
  */
-export function closePopup(element, hideDark = true) {
-    element = parseElement(element);
+export function closePopup(pop, hideDark = true, clear = false) {
+    pop = parseElement(pop);
     if (hideDark) document.querySelector('#layerMask').style.display = 'none';
-    element.style.display = 'none';
+    pop.style.display = 'none';
+
+    if (clear === false) return;
+    const radioNames = [];
+    pop.querySelectorAll('input, textarea, select').forEach(el => {
+        if (el.type === 'text') el.value = ''
+        else if (el.type === 'checkbox') el.checked = false;
+        else if (el.type === 'radio') {
+            if (radioNames.includes(el.name)) return;
+            radioNames.push(el.name);
+            el.checked = true;
+        }
+        else if (el.type === 'select-one') el.options[0].selected = true;
+        else if (el.type === 'textarea') el.value = '';
+    })
 }
 
 /**
