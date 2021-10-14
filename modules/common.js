@@ -1,9 +1,23 @@
 //공통적으로 사용될만한 함수 모음
 import {isEmpty, isEnter, isNumber} from "./validator";
 
+/** 인자가 문자열인 경우 엘리먼트로 리턴 */
+export function parseElement(selectorOrElement) {
+    let el = selectorOrElement
+    if (el instanceof HTMLElement) return el
+
+    if (typeof el === 'string') {
+        el = document.querySelector(el)
+        if (!el) throw new Error('not found element.')
+        return el
+    }
+
+    throw new Error('parameter only access string or HTMLElement.')
+}
+
 /**
  * 부모 element 를 찾아서 리턴
- * @param {HTMLElement} target         시작 el 위치
+ * @param {HTMLElement || String} target         시작 el 위치
  * @param {string}  parentElName   찾을 부모 element 이름
  */
 export function findParentElement(target, parentElName) {
@@ -35,11 +49,12 @@ export function nvl(value, defaultValue = '') {
 
 /**
  * 팝업창 가운데에서 열기
- * @param {HTMLElement} element
+ * @param {HTMLElement || String} element
  * @param showDark 어두운 배경 키기
  */
 export function openPopup(element, showDark = true) {
     //#layerMask {z-index:300; display:none; position:fixed; top: 0; width:100%; height:100%; background-color: rgba(0,0,0,0.7);}
+    element = parseElement(element);
     if (showDark) document.querySelector('#layerMask').style.display = 'block';
 
     element.style.position = 'fixed';
@@ -53,10 +68,11 @@ export function openPopup(element, showDark = true) {
 
 /**
  * 팝업창 닫기
- * @param {HTMLElement} element
+ * @param {HTMLElement || String} element
  * @param hideDark 어두운 배경 끄기
  */
 export function closePopup(element, hideDark = true) {
+    element = parseElement(element);
     if (hideDark) document.querySelector('#layerMask').style.display = 'none';
     element.style.display = 'none';
 }
@@ -132,10 +148,11 @@ export function initUrlQueryString() {
  * for IE
  * disabled 상태 일때 event 발동이 안됨
  * 이를 위해 disabled 제거하고 이벤트 발생 시키고 다시 disabled 상태로
- * @param {HTMLElement} element
+ * @param {HTMLElement || String} element
  * @param {Event} event
  */
 export function dispatchEvent(element, event) {
+    element = parseElement(element);
     if (element["disabled"] === true) {
         element["disabled"] = false;
         element.dispatchEvent(event);
