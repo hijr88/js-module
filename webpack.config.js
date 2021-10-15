@@ -1,5 +1,6 @@
 const path = require("path");
 const JS_ROOT = './src/main/webapp/js';
+const MODULE_DIR = './modules';
 
 module.exports = (env) => {
 
@@ -59,8 +60,7 @@ module.exports = (env) => {
         },
         resolve: {
             alias: {
-                '@webapp': path.resolve(__dirname, 'src/main/webapp'),
-                '@modules': path.resolve(__dirname, 'src/main/webapp/js/modules'),
+                '@modules': path.resolve(__dirname, MODULE_DIR),
                 '@css': path.resolve(__dirname, 'src/main/webapp/css'),
             },
             modules: [path.resolve(__dirname, 'src/main/webapp'), 'node_modules'],

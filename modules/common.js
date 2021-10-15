@@ -1,5 +1,5 @@
 //공통적으로 사용될만한 함수 모음
-import {isEmpty, isEnter, isNumber} from "./validator";
+import {isEmpty, isEnter, isNumber} from "@modules/validator";
 
 /** 인자가 문자열인 경우 엘리먼트로 리턴 */
 export function parseElement(selectorOrElement) {
