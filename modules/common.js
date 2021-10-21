@@ -1,7 +1,10 @@
 //공통적으로 사용될만한 함수 모음
 import {isEmpty, isEnter, isNumber} from "@modules/validator";
 
-/** 인자가 문자열인 경우 엘리먼트로 리턴 */
+/**
+ *  인자가 문자열인 경우 엘리먼트로 리턴
+ * @param {HTMLElement || string} selectorOrElement         시작 el 위치
+ */
 export function parseElement(selectorOrElement) {
     let el = selectorOrElement
     if (el instanceof HTMLElement) return el
@@ -17,7 +20,7 @@ export function parseElement(selectorOrElement) {
 
 /**
  * 부모 element 를 찾아서 리턴
- * @param {HTMLElement || String} target         시작 el 위치
+ * @param {HTMLElement} target         시작 el 위치
  * @param {string}  parentElName   찾을 부모 element 이름
  */
 export function findParentElement(target, parentElName) {

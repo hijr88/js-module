@@ -78,9 +78,7 @@ export default function paging({
                 params.pageNumber = pageNumber;
                 params.pageSize = pageSize;
 
-                const response = await findPage(params);
-
-                const page = response.page;
+                const page = await findPage(params);
                 cachedCount = page["totalElements"];
 
                 printList(page);
