@@ -80,6 +80,13 @@ const request = (()=>{
                     alert('해당 URL이 존재하지 않습니다.');
                     throw 'Not Found';
                 }
+                case 405: {
+                    //alert('허용하지 않는 method입니다.');
+                    throw 'Method Not Allowed';
+                }
+                default: {
+                    throw 'response status error'
+                }
             }
         }
     }
