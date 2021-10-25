@@ -72,10 +72,10 @@ export function openPopup(pop, showDark = true) {
 /**
  * 팝업창 닫기
  * @param {HTMLElement || String} pop 팝업
- * @param hideDark 어두운 배경 끄기
  * @param clear 팝업 입력값 초기화
+ * @param hideDark 어두운 배경 끄기
  */
-export function closePopup(pop, hideDark = true, clear = false) {
+export function closePopup(pop, clear = false, hideDark = true) {
     pop = parseElement(pop);
     if (hideDark) document.querySelector('#layerMask').style.display = 'none';
     pop.style.display = 'none';
