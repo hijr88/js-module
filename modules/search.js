@@ -31,6 +31,9 @@ export default function search(searchArea, attrName = 'data-name') {
                 element.dispatchEvent(new Event('initDate'));
             } else {
                 element.value = '';
+                if (element.tagName === 'SELECT') {
+                    validSelect(element);
+                }
             }
         }
         cashedData = null;
@@ -139,11 +142,17 @@ export default function search(searchArea, attrName = 'data-name') {
                     }
                 }
 
-                //select 값이 존재하지 않은경우 첫번째 값으로
-                if (element.tagName === 'SELECT' && element.selectedIndex === -1) {
-                    element.selectedIndex = 0;
+                if (element.tagName === 'SELECT') {
+                    validSelect(element);
                 }
             }
+        }
+    }
+
+    //select 값이 존재하지 않은경우 첫번째 값으로
+    function validSelect(select) {
+        if (select.selectedIndex === -1) {
+            select.selectedIndex = 0;
         }
     }
 
