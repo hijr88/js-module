@@ -15,6 +15,7 @@ export default function search(searchArea, attrName = 'data-name') {
                 obj[name] = [el];
             }
         } else {
+            if (obj.hasOwnProperty(name)) throw `${attrName}=${name} duplicate`;
             obj[name] = el;
         }
         return obj;

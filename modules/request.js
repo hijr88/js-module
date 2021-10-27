@@ -20,8 +20,6 @@ const request = (()=>{
         return headers;
     }
 
-    //beforesend
-    //https://stackoverflow.com/questions/66080100/beforesend-function-in-fetch-api
     async function getResponse(url, method, headers, body, failMessage) {
 
         if (method.toLowerCase() === 'get') {
@@ -32,6 +30,7 @@ const request = (()=>{
 
         let response;
         try {
+            //before function
             response = await fetch(url, {
                 method: method,
                 headers: headers,
@@ -40,6 +39,8 @@ const request = (()=>{
         } catch (err) { //서버 연결 실패
             alert('서버 연결에 실패하였습니다.');
             throw 'Connection Failed';
+        } finally {
+            //after function
         }
 
         if (response.ok) {
@@ -78,7 +79,7 @@ const request = (()=>{
                 }
                 case 404: {
                     alert('해당 URL이 존재하지 않습니다.');
-                    throw 'Not Found';
+                    throw 'Not Found URL';
                 }
                 case 405: {
                     //alert('허용하지 않는 method입니다.');
