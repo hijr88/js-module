@@ -45,6 +45,7 @@ export function isEmpty(obj) {
     else if (isLiteralObject(obj)) {
         return Object.keys(obj).length === 0;
     }
+    console.error('not supported type');
     return true;
 }
 
