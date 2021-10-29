@@ -16,7 +16,7 @@ export function inputOnlyNumber(input) {
             const key = e.key;
             if (e.ctrlKey && key === 'v') return;
 
-            const allowKey = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End']);
+            const allowKey = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End', 'Tab']);
             const num = Number.parseInt(key);
 
             if (! (Number.isInteger(num) || allowKey.has(key))) {
