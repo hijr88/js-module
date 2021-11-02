@@ -82,6 +82,7 @@ export function parseDate(date, formatString = undefined) {
  * @param maxDate 최대 날짜
  * @param pairId 시작 달력과 끝 달력을 연결할 아이디
  * @param formatString 날짜 형식
+ * @param enableDeselect 날짜 취소 가능 여부
  * 페어인 경우 min, max는 첫번째 객체의 옵션 적용
  */
 export function datePicker({
@@ -90,7 +91,8 @@ export function datePicker({
                                minDate = dayjs().add(-2, 'year').toDate(),
                                maxDate = new Date(),
                                pairId = null,
-                               formatString = 'YYYY-MM-DD'
+                               formatString = 'YYYY-MM-DD',
+                               enableDeselect = false
                            })
 {
     const options = {
@@ -99,7 +101,7 @@ export function datePicker({
         overlayPlaceholder: '연도(YYYY)',
         overlayButton: "확인",
         showAllDates: true,
-        enableDeselect: false,
+        enableDeselect: enableDeselect,
 
         //선택했을때 날자형식
         formatter: (input, date) => input.value = dateFormatter(date, formatString),
