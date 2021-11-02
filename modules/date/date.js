@@ -70,6 +70,7 @@ export function dateFormatter(date, formatString = 'YYYY-MM-DD') {
  * @return {Date}
  */
 export function parseDate(date, formatString = undefined) {
+    if (date instanceof CustomDate) parseDate(date.toDate(), formatString);
     return dayjs(date ?? new Date(), formatString ?? undefined).toDate();
 }
 
@@ -119,12 +120,12 @@ export function datePicker({
     const datepicker = _datepicker(selector, options);
 
     const el = datepicker.el;
-    el.addEventListener('initDate', ()=> datepicker.setDate(initialDate));
+    el.addEventListener('initDate', ()=> datepicker.setDate(options.dateSelected));
     el.addEventListener('updateDate', ()=> {
         try {
             datepicker.setDate(parseDate(el.value));
         } catch {
-            datepicker.setDate(initialDate);
+            datepicker.setDate(options.dateSelected);
         }
     });
 
@@ -169,12 +170,12 @@ export function monthPicker({
     const datepicker = _datepicker(selector, options);
 
     const el = datepicker.el;
-    el.addEventListener('initDate', ()=> datepicker.setDate(initialDate));
+    el.addEventListener('initDate', ()=> datepicker.setDate(options.dateSelected));
     el.addEventListener('updateDate', ()=> {
         try {
             datepicker.setDate(parseDate(el.value));
         } catch {
-            datepicker.setDate(initialDate);
+            datepicker.setDate(options.dateSelected);
         }
     });
 
