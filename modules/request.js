@@ -78,7 +78,7 @@ const request = (()=>{
                     break;
                 }
                 case 404: {
-                    alert('해당 URL이 존재하지 않습니다.');
+                    //alert('해당 URL이 존재하지 않습니다.');
                     throw 'Not Found URL';
                 }
                 case 405: {
