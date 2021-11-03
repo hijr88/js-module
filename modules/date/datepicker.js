@@ -1470,7 +1470,8 @@ function oneHandler(e) {
           return firstDate <= secondDate && secondDate <= second.originalMaxDate.getTime();
         }
       }
-      return true;
+      const newDate = new Date(newValue, instance.currentMonth).getTime();
+      return instance.minDate.getTime() <= newDate && newDate <= instance.maxDate.getTime();
     })()
 
     submitButton.classList[newValue.length === 4 && validDateRange ? 'remove' : 'add']('qs-disabled')
