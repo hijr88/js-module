@@ -84,7 +84,7 @@ export function parseDate(date, formatString = undefined) {
  * @param pairId 시작 달력과 끝 달력을 연결할 아이디
  * @param formatString 날짜 형식
  * @param enableDeselect 날짜 취소 가능 여부
- * 페어인 경우 min, max는 첫번째 객체의 옵션 적용
+ * 페어인 경우 min은 첫번째, max는 두번째 객체의 옵션 적용
  */
 export function datePicker({
                                selector,

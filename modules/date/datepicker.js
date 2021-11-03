@@ -416,7 +416,7 @@ function createInstance(selectorOrElement, opts) {
     const first = options.sibling
     const second = instance
     const minDate = first.minDate || second.minDate
-    const maxDate = first.maxDate || second.maxDate
+    const maxDate = second.maxDate || first.maxDate
 
     // Store the 1st instance as a sibling on the 2nd.
     second.sibling = first
