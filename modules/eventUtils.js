@@ -78,11 +78,21 @@ export function preventInput(input) {
     input.addEventListener('paste', paste);
 }
 
-/** 입력한 글자수만큼 (? / max) 숫자 변화 이벤트 */
-export function checkLength(parentNode) {
-    parentNode.querySelectorAll('.checkLength').forEach(input => {
-        input.addEventListener('keyup', function (){
-            this.nextElementSibling.firstElementChild.textContent = this.value.length;
+/**
+ * 입력한 글자수만큼 (? / max) 숫자 변화 이벤트
+ * .checkLength가 붙은 element에 전부 이벤트 부여
+ */
+export function fixedCheckLength(parentElement) {
+    parentElement.querySelectorAll('.checkLength').forEach(input => {
+        const maxLength = input.maxLength;
+        const span = input.parentElement.querySelector('span.length');
+
+        input.addEventListener('input', function (e){
+            if (maxLength && this.value.length > maxLength) {
+                this.value = this.value.substring(0, maxLength);
+            }
+            if (span == null) return;
+            span.textContent = this.value.length;
         })
     });
 
@@ -92,4 +102,25 @@ export function checkLength(parentNode) {
         <span> 0</span><span> /max</span>
     </div>
     */
+}
+
+/**
+ * 입력한 글자수만큼 (? / max) 숫자 변화 이벤트
+ * 부모 element에 부여하여 공통 처리
+ */
+export function flexibleCheckLength(parentElement) {
+    parentElement.addEventListener('input', function (e){
+        e.preventDefault();
+
+        const target = e.target;
+        if (!target.classList.contains('checkLength')) return;
+        const maxLength = target.maxLength;
+        const span = target.parentElement.querySelector('span.length');
+
+        if (maxLength && target.value.length > maxLength) {
+            target.value = target.value.substring(0, maxLength);
+        }
+        if (span == null) return;
+        span.textContent = target.value.length;
+    })
 }

@@ -25,8 +25,7 @@ export function parseElement(selectorOrElement) {
  */
 export function findParentElement(target, parentElName) {
     if (target.nodeType !== 1) {
-        console.error('only element allowed');
-        return;
+        throw('only element allowed');
     }
 
     parentElName = parentElName.toUpperCase(); //tagName은 대문자
@@ -35,7 +34,32 @@ export function findParentElement(target, parentElName) {
         if (el.tagName !== parentElName) continue;
         return el;
     }
-    console.error(parentElName + '을 찾지 못하였습니다.');
+    throw(parentElName + '을 찾지 못하였습니다.');
+}
+
+/**
+ * n번째 부모 element 를 찾아서 리턴
+ * @param {Element} target         시작 el 위치
+ * @param {number}  nth 		   n번째
+ * @param {string}  parentElName   찾을 부모 element 이름
+ */
+export function findNthParentElement(target, nth, parentElName) {
+    if (target.nodeType !== 1) {
+        throw('only element allowed');
+    }
+
+    let errorMessage = nth +'번째 부모 ' + parentElName + '을 찾지 못하였습니다.';
+    let count = 1; //몇번째인지 체크
+
+    parentElName = parentElName.toUpperCase(); //tagName은 대문자
+
+    for (let el = target; el !== null; el=el.parentElement) {
+        if (el.tagName !== parentElName) continue;
+        if (nth === count) {
+            return el;
+        } else count++;
+    }
+    throw(errorMessage);
 }
 
 /**
