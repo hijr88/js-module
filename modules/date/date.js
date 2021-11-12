@@ -89,7 +89,7 @@ export function parseDate(date, formatString = undefined) {
  */
 export function datePicker({
                                selector,
-                               initialDate = new Date(),
+                               initialDate = undefined,
                                minDate = dayjs().add(-2, 'year').toDate(),
                                maxDate = new Date(),
                                pairId = null,
@@ -109,7 +109,7 @@ export function datePicker({
         formatter: (input, date) => input.value = dateFormatter(date, formatString),
 
         //초기 날짜
-        dateSelected: parseDate(initialDate),
+        dateSelected: initialDate ? parseDate(initialDate) : undefined,
         //최소 날짜
         minDate: parseDate(minDate),
         //최대 날짜
