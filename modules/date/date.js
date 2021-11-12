@@ -70,7 +70,8 @@ export function dateFormatter(date, formatString = 'YYYY-MM-DD') {
  * @return {Date}
  */
 export function parseDate(date, formatString = undefined) {
-    if (date instanceof CustomDate) parseDate(date.toDate(), formatString);
+    if (date instanceof Date) return date;
+    if (date instanceof CustomDate) return parseDate(date.toDate(), formatString);
     return dayjs(date ?? new Date(), formatString ?? undefined).toDate();
 }
 
