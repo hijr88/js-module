@@ -19,6 +19,7 @@ export function parseElement(selectorOrElement) {
 }
 
 /**
+ * https://developer.mozilla.org/ko/docs/Web/API/Element/closest 이런 함수가 있네요!!
  * 부모 element 를 찾아서 리턴
  * @param {HTMLElement} target         시작 el 위치
  * @param {string}  parentElName   찾을 부모 element 이름
