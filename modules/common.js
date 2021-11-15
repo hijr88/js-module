@@ -34,7 +34,7 @@ export function findParentElement(target, parentElName) {
         if (el.tagName !== parentElName) continue;
         return el;
     }
-    throw(parentElName + '을 찾지 못하였습니다.');
+    console.error(parentElName + '을 찾지 못하였습니다.');
 }
 
 /**
@@ -59,7 +59,7 @@ export function findNthParentElement(target, nth, parentElName) {
             return el;
         } else count++;
     }
-    throw(errorMessage);
+    console.error(errorMessage);
 }
 
 /**
