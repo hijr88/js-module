@@ -20,6 +20,7 @@ const request = (()=>{
         return headers;
     }
 
+    let pool = 0;
     async function getResponse(url, method, headers, body, failMessage) {
 
         if (method.toLowerCase() === 'get') {
@@ -30,6 +31,7 @@ const request = (()=>{
 
         let response;
         try {
+            pool+=1;
             //before function
             response = await fetch(url, {
                 method: method,
@@ -40,7 +42,10 @@ const request = (()=>{
             alert('서버 연결에 실패하였습니다.');
             throw 'Connection Failed';
         } finally {
-            //after function
+            if (pool === 1) {
+                //after function ex) hide();
+            }
+            pool-=1;
         }
 
         if (response.ok) {

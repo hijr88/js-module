@@ -87,7 +87,7 @@ export function fixedCheckLength(parentElement) {
         const maxLength = input.maxLength;
         const span = input.parentElement.querySelector('span.length');
 
-        input.addEventListener('input', function (e){
+        input.addEventListener('input', function (){
             if (maxLength && this.value.length > maxLength) {
                 this.value = this.value.substring(0, maxLength);
             }

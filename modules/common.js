@@ -265,3 +265,7 @@ export function toByte(fileSize, maximumFractionDigits = 0) {
     }
     return str;
 }
+
+export function rgb2hex(rgb) {
+    return '#' + rgb.substr(4, rgb.indexOf(')') - 4).split(',').map((color) => parseInt(color).toString(16).padStart(2, '0')).join('');
+}
