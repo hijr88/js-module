@@ -1,5 +1,5 @@
 //공통적으로 사용될만한 함수 모음
-import {isEmpty, isEnter, isNumber} from "@modules/validator";
+import {isEmpty, isEnter, isLiteralObject, isNumber} from "@modules/validator";
 
 /**
  *  인자가 문자열인 경우 엘리먼트로 리턴
@@ -267,5 +267,24 @@ export function toByte(fileSize, maximumFractionDigits = 0) {
 }
 
 export function rgb2hex(rgb) {
+    if (rgb.startsWith('#')) {
+        if (rgb.length === 4) {
+            return '#' + rgb[1] + rgb[1] + rgb[2] + rgb[2] + rgb[3] + rgb[3];
+        } else {
+            return rgb;
+        }
+    }
     return '#' + rgb.substr(4, rgb.indexOf(')') - 4).split(',').map((color) => parseInt(color).toString(16).padStart(2, '0')).join('');
+}
+
+/** 중첩된 오브젝트에서 해당 키를 가지고 있는 오브젝트 리턴 */
+export function findHasKeyObject(object, key) {
+    if (object.hasOwnProperty(key)) return object;
+
+    for (const property in object) {
+        if (isLiteralObject(object[property])) {
+            const res = findHasKeyObject(object[property], key);
+            if (res) return res;
+        }
+    }
 }
