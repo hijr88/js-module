@@ -123,7 +123,7 @@ export default function paging({
         const list  = div.querySelector('.pageList');
         const right = div.querySelector('.pageRight');
 
-        const startNum = page.number- ( (page.number%size) -1);
+        const startNum = page.number- ( (page.number-1)%size );
 
         if (page.number > size) { //이전버튼
             const previous = page.number - size;
