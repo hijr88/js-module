@@ -43,7 +43,7 @@ export default function search(searchArea, attrName = 'data-name') {
     /**
      * name에 해당하는 값 리턴
      * @param {string} name 필드 name
-     * @return {HTMLElement || Array} 엘리먼트, 라디오는 배열
+     * @return {HTMLElement || Array[HTMLElement]} 엘리먼트, 라디오는 배열
      */
     function getField(name) {
         return f[name];

@@ -115,6 +115,8 @@ export function datePicker({
         //최대 날짜
         maxDate: parseDate(maxDate),
     };
+    if (options.dateSelected && options.minDate > options.dateSelected) options.dateSelected = options.minDate;
+    if (options.dateSelected && options.maxDate < options.dateSelected) options.dateSelected = options.maxDate;
 
     if (pairId != null) options["id"] = pairId;
 
@@ -146,6 +148,9 @@ export function monthPicker({
     initialDate = toYearMonth(parseDate(initialDate))
     minDate = toYearMonth(parseDate(minDate))
     maxDate = toYearMonth(parseDate(maxDate))
+
+    if (minDate > initialDate) initialDate = minDate;
+    if (maxDate < initialDate) initialDate = maxDate;
 
     const options = {
         customMonths: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
