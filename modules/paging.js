@@ -116,47 +116,58 @@ export default function paging({
      * @param page {Object}     서버에서 응답한 페이지객체
      * @param size {Number}     페이징 버튼 개수
      */
-    function printButton(page, size= 10) {
-
+    const printButton = (()=> {
         const div = document.querySelector('div#pagination');
         const left  = div.querySelector('.pageLeft');
         const list  = div.querySelector('.pageList');
         const right = div.querySelector('.pageRight');
 
-        const startNum = page.number- ( (page.number-1)%size );
+        let previousNumber, nextNumber, maxNumber;
 
-        if (page.number > size) { //이전버튼
-            const previous = page.number - size;
-            left.style.display = '';
-            left.children[0].addEventListener('click', goPage.bind(null,1, true));
-            left.children[1].addEventListener('click', goPage.bind(null,previous, true));
-        } else {
-            left.style.display = 'none';
+        function go(num, e) {
+            e.preventDefault();
+            goPage.bind(null,num, true)();
         }
+        left.children[0].addEventListener('click', (e) => go(1, e));
+        left.children[1].addEventListener('click', (e) => go(previousNumber, e));
 
-        if (startNum + size <= page["totalPages"]) { //다음버튼
-            const next = startNum + size;
-            right.style.display = '';
-            right.children[0].addEventListener('click', goPage.bind(null,next, true));
-            right.children[1].addEventListener('click', goPage.bind(null,page["totalPages"], true));
-        } else {
-            right.style.display = 'none';
-        }
+        right.children[0].addEventListener('click', (e) => go(nextNumber, e));
+        right.children[1].addEventListener('click', (e) => go(maxNumber, e));
 
-        list.innerHTML = '';
-        for (let i=0; startNum+i <= page["totalPages"] && i<size; i++) {
-            const html = `
-                <li class="${startNum+i === page.number ? 'on' : ''}">
-                    <a href="${location.pathname}">${startNum+i}</a>
-                </li>`;
-            list.insertAdjacentHTML('beforeend',html);
-            if (startNum+i !== page.number) {
-                list.lastElementChild.addEventListener('click', goPage.bind(null, startNum +i, true));
+        return function (page, size= 10) {
+
+            const startNum = page.number- ( (page.number-1)%size );
+
+            if (page.number > size) { //이전버튼
+                previousNumber = page.number - size;
+                left.style.display = '';
             } else {
-                list.lastElementChild.addEventListener('click', e => e.preventDefault());
+                left.style.display = 'none';
+            }
+
+            if (startNum + size <= page["totalPages"]) { //다음버튼
+                nextNumber = startNum + size;
+                maxNumber = page["totalPages"];
+                right.style.display = '';
+            } else {
+                right.style.display = 'none';
+            }
+
+            list.innerHTML = '';
+            for (let i=0; startNum+i <= page["totalPages"] && i<size; i++) {
+                const html = `
+                    <li class="${startNum+i === page.number ? 'on' : ''}">
+                        <a href="${location.pathname}">${startNum+i}</a>
+                    </li>`;
+                list.insertAdjacentHTML('beforeend',html);
+                if (startNum+i !== page.number) {
+                    list.lastElementChild.addEventListener('click', goPage.bind(null, startNum +i, true));
+                } else {
+                    list.lastElementChild.addEventListener('click', e => e.preventDefault());
+                }
             }
         }
-    }
+    })();
 
     return {
         init: init,
