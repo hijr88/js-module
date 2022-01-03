@@ -1,5 +1,5 @@
 //공통적으로 사용될만한 함수 모음
-import {isEmpty, isEnter, isLiteralObject, isNumber} from "./validator";
+import {isEmpty, isEnter, isObjectLiteral, isNumber} from "./validator";
 
 /**
  *  인자가 문자열인 경우 엘리먼트로 리턴
@@ -110,6 +110,17 @@ export function getUrlParams(useSession = false) {
         }
     })();
     return Object.fromEntries(urlSearchParams.entries());
+}
+
+/**
+ * @param {Object} data
+ * @return {string}
+ */
+export function toQueryString(data) {
+    if (isObjectLiteral(data) === false) {
+        throw 'is not object literal'
+    }
+    return new URLSearchParams(data).toString();
 }
 
 /**
@@ -237,7 +248,7 @@ export function findHasKeyObject(object, key) {
     if (object.hasOwnProperty(key)) return object;
 
     for (const property in object) {
-        if (isLiteralObject(object[property])) {
+        if (isObjectLiteral(object[property])) {
             const res = findHasKeyObject(object[property], key);
             if (res) return res;
         }

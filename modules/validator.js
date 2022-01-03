@@ -22,7 +22,7 @@ function isPrimitive(value) {
  * @param {Object} obj
  * @return {boolean}
  */
-export function isLiteralObject(obj) {
+export function isObjectLiteral(obj) {
     return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
@@ -42,7 +42,7 @@ export function isEmpty(obj) {
         return obj.length === 0;
     }
 
-    else if (isLiteralObject(obj)) {
+    else if (isObjectLiteral(obj)) {
         return Object.keys(obj).length === 0;
     }
     console.error('not supported type');
@@ -58,17 +58,21 @@ export function isEnter(e) {
 }
 
 /**
- * 테이블의 tr 클릭 전에 유효성 검사
+ * 테이블의 tr 클릭 전에 유효성 검사<br>
  * 체크박스이거나, 체크박스가 포함된 영역이거나, tbody => false
  * @param {Event} e
  * @return {boolean}
  */
 export function isValidTr(e) {
-    if (e.target.getAttribute('data-type') === 'checkbox') {
+    if (e.target.tagName === 'TBODY') return false;
+    if (e.target.tagName === 'TR') return true;
+
+    const td = e.target.closest('td');
+    if (td.querySelector('input[type=checkbox]')) {
         e.stopPropagation();
         return false;
     }
-    return !(e.target.type === 'checkbox' || e.target.tagName === 'TBODY');
+    return true;
 }
 
 /**
