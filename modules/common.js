@@ -1,5 +1,5 @@
 //공통적으로 사용될만한 함수 모음
-import {isEmpty, isEnter, isLiteralObject, isNumber} from "@modules/validator";
+import {isEmpty, isEnter, isLiteralObject, isNumber} from "./validator";
 
 /**
  *  인자가 문자열인 경우 엘리먼트로 리턴
@@ -16,51 +16,6 @@ export function parseElement(selectorOrElement) {
     }
 
     throw new Error('parameter only access string or HTMLElement.')
-}
-
-/**
- * https://developer.mozilla.org/ko/docs/Web/API/Element/closest 이런 함수가 있네요!!
- * 부모 element 를 찾아서 리턴
- * @param {HTMLElement} target         시작 el 위치
- * @param {string}  parentElName   찾을 부모 element 이름
- */
-export function findParentElement(target, parentElName) {
-    if (target.nodeType !== 1) {
-        throw('only element allowed');
-    }
-
-    parentElName = parentElName.toUpperCase(); //tagName은 대문자
-
-    for (let el = target; el !== null; el=el.parentElement) {
-        if (el.tagName !== parentElName) continue;
-        return el;
-    }
-    console.error(parentElName + '을 찾지 못하였습니다.');
-}
-
-/**
- * n번째 부모 element 를 찾아서 리턴
- * @param {Element} target         시작 el 위치
- * @param {number}  nth 		   n번째
- * @param {string}  parentElName   찾을 부모 element 이름
- */
-export function findNthParentElement(target, nth, parentElName) {
-    if (target.nodeType !== 1) {
-        throw('only element allowed');
-    }
-
-    let errorMessage = nth +'번째 부모 ' + parentElName + '을 찾지 못하였습니다.';
-    let count = 1; //몇번째인지 체크
-
-    parentElName = parentElName.toUpperCase(); //tagName은 대문자
-
-    for (let el = target; el !== null; el=el.parentElement) {
-        if (el.tagName !== parentElName) continue;
-        if (nth === count) {
-            return el;
-        } else count++;
-    }
-    console.error(errorMessage);
 }
 
 /**

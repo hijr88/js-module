@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import {isEmpty} from '@modules/validator'
+import {isEmpty} from './validator'
 
 const request = (()=>{
     function serialize(obj) {
