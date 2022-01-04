@@ -32,7 +32,7 @@ export default function paging({
     /**
      * @param e click 이벤트 또는 페이지 번호
      */
-    function goSearch(e) {
+    function goSearch(e = undefined) {
         const params = search.data(true);
 
         if (e instanceof Event) {
