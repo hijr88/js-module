@@ -80,7 +80,7 @@ const request = (()=>{
                 case 401: {
                     alert('세션이 종료되었습니다.');
                     location.href = '/';
-                    break;
+                    throw 'Unauthorized';
                 }
                 case 404: {
                     //alert('해당 URL이 존재하지 않습니다.');
