@@ -114,12 +114,14 @@ export function getUrlParams(useSession = false) {
 
 /**
  * @param {Object} data
+ * @param {boolean} isRemoveEmpty
  * @return {string}
  */
-export function toQueryString(data) {
+export function toQueryString(data, isRemoveEmpty= true) {
     if (isObjectLiteral(data) === false) {
         throw 'is not object literal'
     }
+    if (isRemoveEmpty) data = removeEmptyObject(data);
     return new URLSearchParams(data).toString();
 }
 

@@ -1,3 +1,5 @@
+import {toQueryString} from "./common";
+
 /**
  * @param {Object}   search             모듈에 있는 search 구현한것
  * @param {function} findPage           리스트 불러올 함수
@@ -89,6 +91,7 @@ export default function paging({
                         printButton(page, pageRange);
                     }
                 }
+                history.replaceState(null, null, '?' + toQueryString(getPageInfo()));
             },
             getPageNumber : function () {
                 return cachedPageNumber;
