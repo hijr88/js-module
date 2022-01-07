@@ -1,4 +1,4 @@
-import {toQueryString} from "./common";
+import {isEnterExec, toQueryString} from "./common";
 
 /**
  * @param {Object}   search             모듈에 있는 search 구현한것
@@ -170,6 +170,17 @@ export default function paging({
                 }
             }
         }
+    })();
+
+    /**
+     * 검색테이블 이벤트 설정
+     */
+    (function setEvent(){
+        //초기화버튼
+        search.el.querySelector('[data-action=init]')?.addEventListener('click', init);
+        //검색버튼
+        search.el.querySelector('[data-action=search]')?.addEventListener('click', goSearch);
+        search.getTags('input', 'text').forEach(f => f.addEventListener('keypress', e => isEnterExec(e, goSearch)));
     })();
 
     return {

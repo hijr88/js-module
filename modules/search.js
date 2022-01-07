@@ -163,5 +163,6 @@ export default function search(searchArea, attrName = 'data-name') {
         getTags: getTags,
         data: getData,
         setData: setData,
+        e: searchArea
     }
 }
