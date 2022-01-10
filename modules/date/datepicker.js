@@ -1,26 +1,8 @@
-/*
-  Importing this scss file so as to declare it's a dependency in the library.
-  Webpack will then separate it out into its own css file and include it in the dist folder.
-*/
 import './datepicker.scss'
-
 
 let datepickers = [] // Get's reassigned in `remove()` below.
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-]
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const sides = {
   // `t`, `r`, `b`, and `l` are all positioned relatively to the input the calendar is attached to.
   t: 'top',
@@ -32,19 +14,8 @@ const sides = {
   c: 'centered'
 }
 
-/*
-  The default callback functions (onSelect, etc.) will be a noop function.
-  Using this variable so we can simply reference the same function.
-  Also, this allows us to check if the callback is a noop function
-  by doing a `=== noop` anywhere we like.
-*/
 function noop() {}
 
-/*
-  Add a single function as the handler for a few events for ALL datepickers.
-  Storing events in an array to access later in the `remove` fxn below.
-  Using `focusin` because it bubbles, `focus` does not.
-*/
 const events = ['click', 'change', 'focusin']
 
 
@@ -243,8 +214,6 @@ function createInstance(selectorOrElement, opts) {
     // This is not used internally, but provided as a convenience for users who might want a reference.
     customElement: customElement,
 
-
-
     // Used to help calculate the position of the calendar.
     positionedEl: positionedEl,
 
@@ -363,12 +332,6 @@ function createInstance(selectorOrElement, opts) {
 
     // Custom overlay months - only the first 3 characters are used.
     overlayMonths: options.overlayMonths || (options.months || months).map(function(m) { return m.slice(0, 3) }),
-
-    // Custom overlay placeholder.
-    overlayPlaceholder: options.overlayPlaceholder || '4-digit year',
-
-    // Custom overlay submit button.
-    overlayButton: options.overlayButton || 'Submit',
 
     // Disable the overlay for changing the year.
     disableYearOverlay: !!options.disableYearOverlay,
@@ -533,7 +496,7 @@ function sanitizeOptions(opts) {
     Check that various options have been provided a JavaScript Date object.
     If so, strip the time from those dates (for accurate future comparisons).
   */
-  ;['startDate', 'dateSelected', 'minDate', 'maxDate'].forEach(function(value) {
+  ['startDate', 'dateSelected', 'minDate', 'maxDate'].forEach(function(value) {
     const date = options[value]
     if (date && !dateCheck(date)) throw new Error('"options.' + value + '" needs to be a valid JavaScript Date object.')
 
@@ -548,8 +511,6 @@ function sanitizeOptions(opts) {
   const maxDate = options.maxDate
   const minDate = options.minDate
   const dateSelected = options.dateSelected
-  const overlayPlaceholder = options.overlayPlaceholder
-  const overlayButton = options.overlayButton
   const startDay = options.startDay
   const id = options.id
 
@@ -669,10 +630,6 @@ function sanitizeOptions(opts) {
     options.startDay = 0
     options.weekendIndices = [6, 0] // Indices of "Saturday" and "Sunday".
   }
-
-  // Custom text for overlay placeholder & button.
-  if (typeof overlayPlaceholder !== 'string') delete options.overlayPlaceholder
-  if (typeof overlayButton !== 'string') delete options.overlayButton
 
   // Show either the calendar (default) or the overlay when the calendar is open.
   const defaultView = options.defaultView
@@ -920,8 +877,6 @@ function createMonth(date, instance, overlayOpen) {
  *  manually navigate to a month & year.
  */
 function createOverlay(instance, overlayOpen) {
-  const overlayButton = instance.overlayButton
-
   const minYear = instance.minDate.getFullYear()
   const maxYear = instance.maxDate.getFullYear()
 
@@ -944,7 +899,6 @@ function createOverlay(instance, overlayOpen) {
         <div class="qs-close">&#10005;</div>
       </div>
       <div class="qs-overlay-month-container">${shortMonths}</div>
-      <div class="qs-submit qs-disabled">${overlayButton}</div>
     </div>`
 }
 
@@ -1204,8 +1158,7 @@ function hideCal(instance) {
     instance.defaultView !== 'overlay' && toggleOverlay(true, instance)
     instance.calendarContainer.classList.add('qs-hidden')
 
-    //월 및 확인버튼 복구
-    instance.calendar.querySelector('.qs-submit').classList.add('qs-disabled')
+    //월 복구
     changeSelectMonth(instance)
     if (!instance.nonInput) instance.el.blur()
 
@@ -1272,11 +1225,6 @@ function overlayYearEntry(e, input, instance, overlayMonthIndex) {
     } else if (!badDate && !input.classList.contains('qs-disabled')) {
       changeMonthYear(null, instance, value)
     }
-
-    // Enable / disabled the submit button.
-  } else if (instance.calendar.contains(input)) { // Scope to one calendar instance.
-    const submit = instance.calendar.querySelector('.qs-submit')
-    submit.classList[badDate ? 'add' : 'remove']('qs-disabled')
   }
 }
 
@@ -1314,7 +1262,6 @@ function oneHandler(e) {
 
   const type = e.type
   let target = e.target
-  const isSelect = target.tagName === 'SELECT'
   const classList = target.classList
   const instance = datepickers.filter(function(picker) { //타겟이 달력속 el이거나 설정한 el인경우
     return picker.calendar.contains(target) || picker.el === target
@@ -1415,63 +1362,18 @@ function oneHandler(e) {
       } else if (!target.classList.contains('qs-disabled')) {
         selectDay(target, instance)
       }
-
-      // 오버레이창의 확인버튼
-    } else if (classList.contains('qs-submit')) {
-      overlayYearEntry(e, input, instance)
-      // Clicking the calendar's el for non-input's should show it.
     } else if (target === instance.el) {
       showCal(instance)
       hideOtherPickers(instance)
     }
-
-    /*
-      Only pay attention to `focusin` events if the calendar's el is an <input>.
-      We use the `focusin` event because it bubbles - `focus` does not bubble.
-    */
-  } else if (type === 'focusin' && instance && !onCal) {
-    if (!instance.nonInput) target.blur();
-  } else if (isSelect && type === 'change') {
-    target.blur()
+  } else if (type === 'focusin' && instance && !onCal && !instance.nonInput) {
+    target.blur();
+  } else if (type === 'change') {
+    target.blur();
     // Avoid applying these restrictions to other inputs on the page. 다른 요소에 피해 안주기 위한 예방.
-    if (!instance || !instance.calendar.contains(target)) return
+    if (!instance || !instance.calendar.contains(target)) return;
 
-    // Only allow numbers & a max length of 4 characters.
-    const submitButton = instance.calendar.querySelector('.qs-submit')
-    const newValue = target.value
-        .split('')
-        // Prevent leading 0's.
-        .reduce(function(acc, char) {
-          if (!acc && char === '0') return ''
-          return acc + (char.match(/[0-9]/) ? char : '')
-        }, '')
-        .slice(0, 4)
-
-    // Set the new value of the input and conditionally enable / disable the submit button.
-    target.value = newValue
-    const validDateRange = (function (){
-      //월선택기이면서 페어가 존재하는 경우
-      if (instance.isMonthPicker && instance.sibling) {
-        const isFirst = !!instance.first
-        const first = instance.first ? instance : instance.sibling
-        const second = first.sibling
-
-        if (isFirst) {
-          const firstDate = new Date(newValue, first.currentMonth).getTime();
-          const secondDate = new Date(second.currentYear, second.currentMonth).getTime();
-          return firstDate <= secondDate && firstDate >= first.originalMinDate.getTime();
-        } else {
-          const firstDate = new Date(first.currentYear, first.currentMonth).getTime();
-          const secondDate = new Date(newValue, second.currentMonth).getTime();
-          return firstDate <= secondDate && secondDate <= second.originalMaxDate.getTime();
-        }
-      }
-      const newDate = new Date(newValue, instance.currentMonth).getTime();
-      return instance.minDate.getTime() <= newDate && newDate <= instance.maxDate.getTime();
-    })()
-
-    submitButton.classList[newValue.length === 4 && validDateRange ? 'remove' : 'add']('qs-disabled')
-    changeSelectMonth(instance, newValue)
+    changeSelectMonth(instance, target.value);
   }
 }
 

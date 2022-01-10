@@ -100,8 +100,6 @@ export function datePicker({
     const options = {
         customMonths: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
         customDays: ['일', '월', '화', '수', '목', '금', '토'],
-        overlayPlaceholder: '연도(YYYY)',
-        overlayButton: "확인",
         showAllDates: true,
         enableDeselect: enableDeselect,
 
@@ -154,8 +152,6 @@ export function monthPicker({
 
     const options = {
         customMonths: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-        overlayPlaceholder: '연도(YYYY)',
-        overlayButton: "확인",
         defaultView: "overlay",
 
         //선택했을때 날자형식
