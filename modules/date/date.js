@@ -1,11 +1,13 @@
 import dayjs from "dayjs";
-import customParseFormat  from 'dayjs/plugin/customParseFormat'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import 'events-polyfill'
 import _datepicker from "./datepicker";
+
 dayjs.extend(customParseFormat);
 
 export class CustomDate {
     #date;
+
     //https://day.js.org/docs/en/parse/string-format
     constructor(date, formatString) {
         this.#date = dayjs(date ?? new Date(), formatString ?? undefined);
@@ -95,11 +97,8 @@ export function datePicker({
                                pairId = null,
                                formatString = 'YYYY-MM-DD',
                                enableDeselect = false
-                           })
-{
+                           }) {
     const options = {
-        customMonths: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-        customDays: ['일', '월', '화', '수', '목', '금', '토'],
         showAllDates: true,
         enableDeselect: enableDeselect,
 
@@ -119,29 +118,31 @@ export function datePicker({
     if (pairId != null) options["id"] = pairId;
 
     const datepicker = _datepicker(selector, options);
-
-    const el = datepicker.el;
-    el.addEventListener('initDate', ()=> datepicker.setDate(options.dateSelected));
-    el.addEventListener('updateDate', ()=> {
-        try {
-            datepicker.setDate(parseDate(el.value));
-        } catch {
-            datepicker.setDate(options.dateSelected);
-        }
-    });
+    pickerAddEvent(datepicker);
 
     return datepicker;
 }
 
+function pickerAddEvent(picker) {
+    const el = picker.el;
+    el.addEventListener('initDate', () => picker.setDate(options.dateSelected));
+    el.addEventListener('updateDate', () => {
+        try {
+            picker.setDate(parseDate(el.value));
+        } catch {
+            picker.setDate(options.dateSelected);
+        }
+    });
+}
+
 export function monthPicker({
-                               selector,
-                               initialDate = new Date(),
-                               minDate = dayjs().add(-2, 'year').toDate(),
-                               maxDate = new Date(),
-                               pairId = null,
-                               formatString = 'YYYY-MM'
-                           })
-{
+                                selector,
+                                initialDate = new Date(),
+                                minDate = dayjs().add(-2, 'year').toDate(),
+                                maxDate = new Date(),
+                                pairId = null,
+                                formatString = 'YYYY-MM'
+                            }) {
     const toYearMonth = (date) => new Date(date.getFullYear(), date.getMonth());
     initialDate = toYearMonth(parseDate(initialDate))
     minDate = toYearMonth(parseDate(minDate))
@@ -151,7 +152,6 @@ export function monthPicker({
     if (maxDate < initialDate) initialDate = maxDate;
 
     const options = {
-        customMonths: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
         defaultView: "overlay",
 
         //선택했을때 날자형식
@@ -170,16 +170,7 @@ export function monthPicker({
     if (pairId != null) options["id"] = pairId;
 
     const datepicker = _datepicker(selector, options);
-
-    const el = datepicker.el;
-    el.addEventListener('initDate', ()=> datepicker.setDate(options.dateSelected));
-    el.addEventListener('updateDate', ()=> {
-        try {
-            datepicker.setDate(parseDate(el.value));
-        } catch {
-            datepicker.setDate(options.dateSelected);
-        }
-    });
+    pickerAddEvent(datepicker);
 
     return datepicker;
 }
