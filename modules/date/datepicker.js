@@ -1,6 +1,6 @@
 import './datepicker.scss'
 
-let datePickers = [];
+let instanceList = [];
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 const sides = {
@@ -39,35 +39,27 @@ calendar.innerHTML = `
     <div class="qs-overlay-month-container"></div>
 </div>`;
 calendarContainer.appendChild(calendar);
-document.body.appendChild(calendarContainer);
 
 /*
- *  Datepicker! Get a date with JavaScript...
+ *  datepicker 생성!
  */
 function datepicker(selectorOrElement, options) {
-    // Create the datepicker instance!
     const instance = createInstance(selectorOrElement, options)
-
-    // Apply the event listeners to the document only once.
-    if (datePickers.length === 0) applyListeners(document)
-
-    // Keep track of all our instances in an array.
-    datePickers.push(instance);
-
-    /*
-      DateRange processing!
-      When we encounted the 2nd in a pair, we need run both through `adjustDateRanges`
-      to handle the min & max settings, and we need to re-render the 1st.
-    */
-    if (instance.second) {
-        const first = instance.sibling
-
-        // Adjust both dateRanges.
-        adjustDateRanges({instance: instance, deselect: !instance.dateSelected})
-        adjustDateRanges({instance: first, deselect: !first.dateSelected})
-
+    if (instanceList.length === 0) {
+        applyListeners(document);
+        document.body.appendChild(calendarContainer);
     }
-    return instance
+
+    //인스턴스 추가
+    instanceList.push(instance);
+
+    //페어가 존재하는 경우 날짜범위(min & max) 재조정
+    if (instance.second) {
+        const first = instance.sibling;
+        adjustDateRanges({instance: instance, deselect: !instance.dateSelected});
+        adjustDateRanges({instance: first, deselect: !first.dateSelected});
+    }
+    return instance;
 }
 
 /*
@@ -95,7 +87,7 @@ function createInstance(selectorOrElement, opts) {
     if (!el) throw new Error('No selector / element found.');
 
     // 이미 설정된 Element 이면 throw
-    if (datePickers.some(picker => picker.el === el))
+    if (instanceList.some(instance => instance.el === el))
         throw new Error('A datepicker already exists on that element.');
 
     const isBody = el === document.body;
@@ -368,7 +360,7 @@ function sanitizeOptions(opts) {
     */
     if (id != null) {
         // Search through pickers already created and see if there's an id match for this one.
-        const pickers = datePickers.filter(picker => picker.id === id);
+        const pickers = instanceList.filter(instance => instance.id === id);
 
         // No more than 2 pickers can have the same id.
         if (pickers.length > 1) throw new Error('Only two datePickers can share an id.')
@@ -941,9 +933,11 @@ function stripTime(dateOrNum) {
 
 /** 달력 감추기 */
 function hideCal(instance) {
-    const isShowing = !calendarContainer.classList.contains('qs-hidden');
+    if (isShow()) {
+        if (instance == null) {
+            instance = instanceList.find(instance => instance.el === calendarContainer.showing);
+        }
 
-    if (isShowing) {
         instance.defaultView !== 'overlay' && toggleOverlay(true, instance)
         calendarContainer.classList.add('qs-hidden')
 
@@ -1032,7 +1026,7 @@ function oneHandler(e) {
     const type = e.type;
     let target = e.target;
     const classList = target.classList;
-    const instance = datePickers.find(function (picker) {
+    const instance = instanceList.find(function (picker) {
         if (target === picker.el) return true;
         if (calendarContainer.contains(target) === false) return false;
         return !!(isShow() && calendarContainer.showing === picker.el);
@@ -1051,7 +1045,7 @@ function oneHandler(e) {
 
     if (type === 'click') {
         //인스턴스가 존재하지 않는경우 == 다른곳 클릭 => 달력 숨기기
-        if (!instance) return datePickers.forEach(hideCal);
+        if (!instance) return hideCal();
 
         const disableYearOverlay = instance.disableYearOverlay;
         const select = calendar.querySelector('.qs-overlay-year');
@@ -1372,19 +1366,19 @@ function remove() {
     const _this = this;
 
     // Remove this instance from the list.
-    datePickers = datePickers.filter(picker => picker !== _this);
+    instanceList = instanceList.filter(instance => instance !== _this);
 
     // Remove siblings references.
     if (sibling) delete sibling.sibling
 
     // If this was the last datepicker in the list, remove the event handlers.
-    if (datePickers.length === 0) removeEvents(document, oneHandler)
+    if (instanceList.length === 0) removeEvents(document, oneHandler)
 
     // Empty this instance of all properties.
     for (const prop in this) delete this[prop]
 
     // If this was the last datepicker in the list, remove the event handlers.
-    if (datePickers.length === 0) {
+    if (instanceList.length === 0) {
         events.forEach(event => document.removeEventListener(event, oneHandler));
         calendarContainer.remove();
     }
