@@ -5,12 +5,24 @@ import _datepicker from "./datepicker";
 
 dayjs.extend(customParseFormat);
 
-export class CustomDate {
+export class DateUtil {
     #date;
 
     //https://day.js.org/docs/en/parse/string-format
-    constructor(date, formatString) {
-        this.#date = dayjs(date ?? new Date(), formatString ?? undefined);
+    constructor(date = new Date(), formatString = undefined) {
+        if (date instanceof Date) {
+            this.#date = dayjs(date);
+        } else if (typeof date === 'string') {
+            this.#date = dayjs(date, formatString);
+        } else if (date instanceof DateUtil) {
+            this.#date = dayjs(date.toDate());
+        } else if (Number.isInteger(date)) {
+            this.#date = dayjs(date);
+        }
+
+        if (this.#date.isValid() === false) {
+            throw 'Invalid Date';
+        }
     }
 
     /**
@@ -19,17 +31,26 @@ export class CustomDate {
      * @return {string}
      */
     firstDayOfMonth(formatString = 'YYYY-MM-DD') {
-        return this.#date.date(1).format(formatString);
+        return this.#date.startOf('month').format(formatString);
+    }
+
+    /**
+     * 현재 달의 마지막일
+     * @param formatString
+     * @return {string}
+     */
+    lastDayOfMonth(formatString = 'YYYY-MM-DD') {
+        return this.#date.endOf('month').format(formatString);
     }
 
     /**
      * https://day.js.org/docs/en/manipulate/add
-     * @param {string} unit ex) y, M, d, h, m, s
+     * @param {string} unit  y=year, M=month, d=day, h=hour, m=minute, s=second
      * @param {number} value 증감할 숫자
-     * @return {CustomDate}
+     * @return {DateUtil}
      */
     update(unit, value) {
-        return new CustomDate(dayjs(this.#date).add(value, unit).toDate());
+        return new DateUtil(this.#date.add(value, unit).toDate());
     }
 
     //https://day.js.org/docs/en/display/format
@@ -72,9 +93,7 @@ export function dateFormatter(date, formatString = 'YYYY-MM-DD') {
  * @return {Date}
  */
 export function parseDate(date, formatString = undefined) {
-    if (date instanceof Date) return date;
-    if (date instanceof CustomDate) return parseDate(date.toDate(), formatString);
-    return dayjs(date ?? new Date(), formatString ?? undefined).toDate();
+    return new DateUtil(date, formatString).toDate();
 }
 
 
