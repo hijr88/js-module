@@ -18,6 +18,8 @@ export class DateUtil {
             this.#date = dayjs(date.toDate());
         } else if (Number.isInteger(date)) {
             this.#date = dayjs(date);
+        } else {
+            throw 'not supported ' + Object.prototype.toString.call(date);
         }
 
         if (this.#date.isValid() === false) {
@@ -160,7 +162,8 @@ export function monthPicker({
                                 minDate = dayjs().add(-2, 'year').toDate(),
                                 maxDate = new Date(),
                                 pairId = null,
-                                formatString = 'YYYY-MM'
+                                formatString = 'YYYY-MM',
+                                onMonthChange,
                             }) {
     const toYearMonth = (date) => new Date(date.getFullYear(), date.getMonth());
     initialDate = toYearMonth(parseDate(initialDate))
@@ -184,6 +187,8 @@ export function monthPicker({
         maxDate: maxDate,
 
         isMonthPicker: true,
+
+        onMonthChange: onMonthChange,
     };
 
     if (pairId != null) options["id"] = pairId;

@@ -917,18 +917,21 @@ function dateCheck(date) {
  * 유효하지 않은 날짜면 undefined 반환
  */
 function stripTime(dateOrNum) {
-    // NOTE: in `createMonth`, `stripTime` is passed a number.
-    /*
-      JavaScript gotcha:
-        +(undefined) => NaN
-        +(null) => 0
-    */
-
-    // Implicit `undefined` here, later checked elsewhere.
     if (!dateCheck(dateOrNum) && (typeof dateOrNum !== 'number' || isNaN(dateOrNum))) return
 
     const date = new Date(+dateOrNum)
     return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+/*
+ * 날짜 또는 숫자를 가져와서 시간 제거하고 1일 고정 날짜 반환
+ * 유효하지 않은 날짜면 undefined 반환
+ */
+function stripDay(dateOrNum) {
+    if (!dateCheck(dateOrNum) && (typeof dateOrNum !== 'number' || isNaN(dateOrNum))) return
+
+    const date = new Date(+dateOrNum)
+    return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 /** 달력 감추기 */
@@ -1142,7 +1145,13 @@ function hide() {
  * this 인스턴스
  */
 function setDate(newDate, changeCalendar = true) {
-    const date = stripTime(newDate); //시간 제거한 새로운 날짜 객체
+    const date = (()=> {
+        if (this.isMonthPicker) {
+            return stripDay(newDate);
+        } else {
+            return stripTime(newDate); //시간 제거한 새로운 날짜 객체
+        }
+    })()
     const sibling = this.sibling;
 
     // Removing the selected date.
