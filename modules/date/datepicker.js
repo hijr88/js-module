@@ -1,8 +1,8 @@
 import './datepicker.scss'
 
-let instanceList = [];
-const days = ['일', '월', '화', '수', '목', '금', '토'];
-const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+let instanceList = []
+const days = ['일', '월', '화', '수', '목', '금', '토']
+const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 const sides = {
     // `t`, `r`, `b`, and `l` are all positioned relatively to the input the calendar is attached to.
     t: 'top',
@@ -11,24 +11,24 @@ const sides = {
     l: 'left',
 
     // `centered` fixes the calendar smack in the middle of the screen. Useful for mobile devices.
-    c: 'centered'
+    c: 'centered',
 }
 
 function noop() {
 }
 
-const events = ['click', 'change', 'focusin'];
+const events = ['click', 'change', 'focusin']
 
-const calendarContainer = document.createElement('div');
+const calendarContainer = document.createElement('div')
 /*
   달력은 컨테이너의 글꼴 크기를 기준으로 조정됩니다.
   사용자는 글꼴 크기 또는 테마를 설정하는 클래스 이름을 제공할 수 있습니다.
   따라서 달력의 전체 크기와 모양을 제어할 수 있습니다.
 */
-calendarContainer.className = 'qs-datepicker-container qs-hidden';
+calendarContainer.className = 'qs-datepicker-container qs-hidden'
 
-const calendar = document.createElement('div');
-calendar.className = 'qs-datepicker';
+const calendar = document.createElement('div')
+calendar.className = 'qs-datepicker'
 calendar.innerHTML = `
 <div class="qs-controls"></div>
 <div class="qs-squares"></div>
@@ -37,8 +37,8 @@ calendar.innerHTML = `
         <select class="qs-overlay-year"></select>
     </div>
     <div class="qs-overlay-month-container"></div>
-</div>`;
-calendarContainer.appendChild(calendar);
+</div>`
+calendarContainer.appendChild(calendar)
 
 /*
  *  datepicker 생성!
@@ -46,20 +46,20 @@ calendarContainer.appendChild(calendar);
 function datepicker(selectorOrElement, options) {
     const instance = createInstance(selectorOrElement, options)
     if (instanceList.length === 0) {
-        applyListeners(document);
-        document.body.appendChild(calendarContainer);
+        applyListeners(document)
+        document.body.appendChild(calendarContainer)
     }
 
     //인스턴스 추가
-    instanceList.push(instance);
+    instanceList.push(instance)
 
     //페어가 존재하는 경우 날짜범위(min & max) 재조정
     if (instance.second) {
-        const first = instance.sibling;
-        adjustDateRanges({instance: instance, deselect: !instance.dateSelected});
-        adjustDateRanges({instance: first, deselect: !first.dateSelected});
+        const first = instance.sibling
+        adjustDateRanges({ instance: instance, deselect: !instance.dateSelected })
+        adjustDateRanges({ instance: first, deselect: !first.dateSelected })
     }
-    return instance;
+    return instance
 }
 
 /*
@@ -71,7 +71,7 @@ function applyListeners(document) {
       Safari won't handle the click event properly if it's on the window.
     */
     events.forEach(function (event) {
-        document.addEventListener(event, oneHandler);
+        document.addEventListener(event, oneHandler)
     })
 }
 
@@ -80,17 +80,17 @@ function applyListeners(document) {
  *  Calls `setCalendarInputValue` and conditionally `showCal`.
  */
 function createInstance(selectorOrElement, opts) {
-    const options = sanitizeOptions(opts || defaults());
+    const options = sanitizeOptions(opts || defaults())
 
-    let el = selectorOrElement;
-    if (typeof el === 'string') el = el[0] === '#' ? document.getElementById(el.slice(1)) : document.querySelector(el);
-    if (!el) throw new Error('No selector / element found.');
+    let el = selectorOrElement
+    if (typeof el === 'string') el = el[0] === '#' ? document.getElementById(el.slice(1)) : document.querySelector(el)
+    if (!el) throw new Error('No selector / element found.')
 
     // 이미 설정된 Element 이면 throw
     if (instanceList.some(instance => instance.el === el))
-        throw new Error('A datepicker already exists on that element.');
+        throw new Error('A datepicker already exists on that element.')
 
-    const isBody = el === document.body;
+    const isBody = el === document.body
 
     const instance = {
         // The calendar will become a sibling to this element in the DOM and be positioned relative to it (except when <body>).
@@ -140,7 +140,6 @@ function createInstance(selectorOrElement, opts) {
 
         defaultView: options.defaultView,
 
-
         // Method to programmatically set the calendar's date.
         setDate: setDate,
 
@@ -183,7 +182,6 @@ function createInstance(selectorOrElement, opts) {
         // Function with custom logic that determines wether a given date is disabled or not.
         disabler: options.disabler,
 
-
         // Labels for months - custom or default.
         months: options.months || months,
 
@@ -224,7 +222,7 @@ function createInstance(selectorOrElement, opts) {
         //선택 취소 가능여부
         enableDeselect: !!options.enableDeselect,
 
-        isMonthPicker: !!options.isMonthPicker
+        isMonthPicker: !!options.isMonthPicker,
     }
 
     /*
@@ -266,9 +264,9 @@ function createInstance(selectorOrElement, opts) {
     }
 
     // Initially populate the <input> field / set attributes on the `el`.
-    if (options.dateSelected) setCalendarInputValue(el, instance);
+    if (options.dateSelected) setCalendarInputValue(el, instance)
 
-    return instance;
+    return instance
 }
 
 /*
@@ -332,7 +330,6 @@ function sanitizeOptions(opts) {
 
     options.startDate = stripTime(options.startDate || dateSelected || new Date())
 
-
     // Checks around disabled dates.
     options.disabledDates = (options.disabledDates || []).reduce(function (acc, date) {
         const newDateNum = +stripTime(date)
@@ -360,7 +357,7 @@ function sanitizeOptions(opts) {
     */
     if (id != null) {
         // Search through pickers already created and see if there's an id match for this one.
-        const pickers = instanceList.filter(instance => instance.id === id);
+        const pickers = instanceList.filter(instance => instance.id === id)
 
         // No more than 2 pickers can have the same id.
         if (pickers.length > 1) throw new Error('Only two datePickers can share an id.')
@@ -381,36 +378,36 @@ function sanitizeOptions(opts) {
       The 'c' option positions the calendar smack in the middle of the screen,
       *not* relative to the input. This can be desirable for mobile devices.
     */
-    const positionFound = ['tr', 'tl', 'br', 'bl', 'c'].some(dir => position === dir);
+    const positionFound = ['tr', 'tl', 'br', 'bl', 'c'].some(dir => position === dir)
     if (position && !positionFound) {
         throw new Error('"options.position" must be one of the following: tl, tr, bl, br, or c.')
     }
-    options.position = establishPosition(position || 'bl');
+    options.position = establishPosition(position || 'bl')
 
     function dsErr(min) {
-        const lessOrGreater = min ? 'less' : 'greater';
-        throw new Error('"dateSelected" in options is ' + lessOrGreater + ' than "' + (min || 'max') + 'Date".');
+        const lessOrGreater = min ? 'less' : 'greater'
+        throw new Error('"dateSelected" in options is ' + lessOrGreater + ' than "' + (min || 'max') + 'Date".')
     }
 
     // Check proper relationship between `minDate`, `maxDate`, & `dateSelected`.
-    if (maxDate < minDate) throw new Error('"maxDate" in options is less than "minDate".');
+    if (maxDate < minDate) throw new Error('"maxDate" in options is less than "minDate".')
     if (dateSelected) {
-        if (minDate > dateSelected) dsErr('min');
-        if (maxDate < dateSelected) dsErr();
+        if (minDate > dateSelected) dsErr('min')
+        if (maxDate < dateSelected) dsErr()
     }
 
     // Callbacks - default to a noop function.
     ['onSelect', 'onShow', 'onHide', 'onMonthChange', 'formatter', 'disabler'].forEach(function (fxn) {
-        if (typeof options[fxn] !== 'function') options[fxn] = noop; // `noop` defined at the top.
+        if (typeof options[fxn] !== 'function') options[fxn] = noop // `noop` defined at the top.
     })
 
     // Custom labels for months & days.
     ;['customDays', 'customMonths', 'customOverlayMonths'].forEach(function (label, i) {
-        const custom = options[label];
-        const num = i ? 12 : 7;
+        const custom = options[label]
+        const num = i ? 12 : 7
 
         // Do nothing if the user hasn't provided this custom option.
-        if (!custom) return;
+        if (!custom) return
 
         if (
             !Array.isArray(custom) || // Must be an array.
@@ -420,7 +417,7 @@ function sanitizeOptions(opts) {
             }) // Must be an array of strings only.
         ) throw new Error('"' + label + '" must be an array with ' + num + ' strings.')
 
-        options[!i ? 'days' : i < 2 ? 'months' : 'overlayMonths'] = custom;
+        options[!i ? 'days' : i < 2 ? 'months' : 'overlayMonths'] = custom
     })
 
     /*
@@ -442,7 +439,7 @@ function sanitizeOptions(opts) {
         options.startDay = +startDay
         options.weekendIndices = [
             daysCopy.length - 1, // Last item in the 1st half of the edited array.
-            daysCopy.length // Next item in the array, 1st item in the 2nd half of the edited array.
+            daysCopy.length, // Next item in the array, 1st item in the 2nd half of the edited array.
         ]
     } else {
         options.startDay = 0
@@ -491,16 +488,16 @@ function establishPosition(positions) {
  *  This method does NOT *show* the calendar on the screen. It only affects the html structure.
  */
 function renderCalendar(instance, date) {
-    const overlay = calendar.querySelector('.qs-overlay');
-    const overlayOpen = overlay && !overlay.classList.contains('qs-hidden');
+    const overlay = calendar.querySelector('.qs-overlay')
+    const overlayOpen = overlay && !overlay.classList.contains('qs-hidden')
 
     // Default to rendering the current month. This is helpful for re-renders.
-    date = date || new Date(instance.currentYear, instance.currentMonth);
+    date = date || new Date(instance.currentYear, instance.currentMonth)
 
     calendar.innerHTML = [
         createControls(date, instance, overlayOpen),
         createMonth(date, instance, overlayOpen),
-        createOverlay(instance, overlayOpen)
+        createOverlay(instance, overlayOpen),
     ].join('')
 
     /*
@@ -521,11 +518,11 @@ function createControls(date, instance, overlayOpen) {
     const minMonth = (() => {
         const minDate = instance.minDate
         return new Date(minDate.getFullYear(), minDate.getMonth()).getTime()
-    })();
+    })()
     const maxMonth = (() => {
         const maxDate = instance.maxDate
         return new Date(maxDate.getFullYear(), maxDate.getMonth()).getTime()
-    })();
+    })()
     const currentMonth = new Date(instance.currentYear, instance.currentMonth).getTime()
 
     return `
@@ -682,9 +679,7 @@ function createMonth(date, instance, overlayOpen) {
     }
 
     // Add the header row of days of the week.
-    const daysAndSquares = days
-        .map(day => `<div class="qs-square qs-day">${day}</div>`)
-        .concat(calendarSquares)
+    const daysAndSquares = days.map(day => `<div class="qs-square qs-day">${day}</div>`).concat(calendarSquares)
 
     // Wrap it all in a tidy div.
     daysAndSquares.unshift('<div class="qs-squares' + (overlayOpen ? ' qs-blur' : '') + '">')
@@ -697,18 +692,18 @@ function createMonth(date, instance, overlayOpen) {
  *  manually navigate to a month & year.
  */
 function createOverlay(instance, overlayOpen) {
-    const minYear = instance.minDate.getFullYear();
-    const maxYear = instance.maxDate.getFullYear();
+    const minYear = instance.minDate.getFullYear()
+    const maxYear = instance.maxDate.getFullYear()
 
     const yearOption = (function () {
-        let html = '';
+        let html = ''
         for (let i = minYear; i <= maxYear; i++) {
-            html += `<option value="${i}">${i}</option>`;
+            html += `<option value="${i}">${i}</option>`
         }
-        return html;
+        return html
     })()
 
-    const shortMonths = makeShortMonths(instance);
+    const shortMonths = makeShortMonths(instance)
 
     return `
     <div class="qs-overlay${overlayOpen ? '' : ' qs-hidden'}">
@@ -759,37 +754,37 @@ function changeSelectMonth(instance, year) {
  *  Calls `setCalendarInputValue`.
  */
 function selectDay(target, instance, enableDeselect) {
-    const el = instance.el;
-    const num = target.textContent;
-    const sibling = instance.sibling;
+    const el = instance.el
+    const num = target.textContent
+    const sibling = instance.sibling
 
     // Prevent Datepicker from selecting (or deselecting) dates.
-    if ((el.disabled || el.readOnly) && instance.respectDisabledReadOnly) return;
+    if ((el.disabled || el.readOnly) && instance.respectDisabledReadOnly) return
 
     // 선택 취소가능한 경우 undefined
-    instance.dateSelected = enableDeselect ? undefined : new Date(instance.currentYear, instance.currentMonth, num);
+    instance.dateSelected = enableDeselect ? undefined : new Date(instance.currentYear, instance.currentMonth, num)
 
     if (sibling) {
         // Update minDate & maxDate of both calendars.
-        adjustDateRanges({instance: instance, deselect: enableDeselect})
+        adjustDateRanges({ instance: instance, deselect: enableDeselect })
 
         //첫번째 달력이면서 페어의 달력이 선택되지 않은 경우
         if (instance.first && !sibling.dateSelected) {
-            sibling.currentYear = instance.currentYear;
-            sibling.currentMonth = instance.currentMonth;
-            sibling.currentMonthName = instance.currentMonthName;
+            sibling.currentYear = instance.currentYear
+            sibling.currentMonth = instance.currentMonth
+            sibling.currentMonthName = instance.currentMonthName
         }
     }
 
     //선택 취소 가능한 경우
     if (enableDeselect) {
-        renderCalendar(instance);
+        renderCalendar(instance)
     } else {
-        hideCal(instance);
+        hideCal(instance)
     }
 
     //날짜를 필드에 세팅
-    setCalendarInputValue(el, instance, enableDeselect);
+    setCalendarInputValue(el, instance, enableDeselect)
 
     // onSelect 콜백
     // Passing in new date so there's no chance of mutating the original object.
@@ -802,22 +797,22 @@ function selectDay(target, instance, enableDeselect) {
   both pairs of a dateRange based upon `originalMinDate` or `originalMaxDate`.
 */
 function adjustDateRanges(args) {
-    const first = args.instance.first ? args.instance : args.instance.sibling;
-    const second = first.sibling;
+    const first = args.instance.first ? args.instance : args.instance.sibling
+    const second = first.sibling
 
     if (first === args.instance) {
         if (args.deselect) {
-            first.minDate = first.originalMinDate;
-            second.minDate = second.originalMinDate;
+            first.minDate = first.originalMinDate
+            second.minDate = second.originalMinDate
         } else {
-            second.minDate = first.dateSelected;
+            second.minDate = first.dateSelected
         }
     } else {
         if (args.deselect) {
-            second.maxDate = second.originalMaxDate;
-            first.maxDate = first.originalMaxDate;
+            second.maxDate = second.originalMaxDate
+            first.maxDate = first.originalMaxDate
         } else {
-            first.maxDate = second.dateSelected;
+            first.maxDate = second.dateSelected
         }
     }
 }
@@ -829,10 +824,10 @@ function adjustDateRanges(args) {
  * @param {boolean} deselect 선택 취소
  */
 function setCalendarInputValue(el, instance, deselect = undefined) {
-    if (instance.nonInput) return;
-    if (deselect) return el.value = '';
-    if (instance.formatter !== noop) return instance.formatter(el, instance.dateSelected, instance);
-    el.value = instance.dateSelected.toDateString();
+    if (instance.nonInput) return
+    if (deselect) return el.value = ''
+    if (instance.formatter !== noop) return instance.formatter(el, instance.dateSelected, instance)
+    el.value = instance.dateSelected.toDateString()
 }
 
 /*
@@ -843,36 +838,36 @@ function setCalendarInputValue(el, instance, deselect = undefined) {
 function changeMonthYear(classList, instance, year, overlayMonthIndex) {
     // 월 선택창
     if (year || overlayMonthIndex) {
-        if (year) instance.currentYear = +year;
-        if (overlayMonthIndex) instance.currentMonth = +overlayMonthIndex;
+        if (year) instance.currentYear = +year
+        if (overlayMonthIndex) instance.currentMonth = +overlayMonthIndex
 
     } else { // 제어창의 방향(◀, ▶)
         instance.currentMonth += classList.contains('qs-right') ? 1 : -1
 
         // Month = 0 ~ 11 제어
         if (instance.currentMonth === 12) {
-            instance.currentMonth = 0;
-            instance.currentYear++;
+            instance.currentMonth = 0
+            instance.currentYear++
         } else if (instance.currentMonth === -1) {
-            instance.currentMonth = 11;
-            instance.currentYear--;
+            instance.currentMonth = 11
+            instance.currentYear--
         }
     }
-    instance.currentMonthName = instance.months[instance.currentMonth];
+    instance.currentMonthName = instance.months[instance.currentMonth]
 
     if (instance.isMonthPicker) {
-        instance.dateSelected = new Date(instance.currentYear, instance.currentMonth);
-        instance.formatter(instance.el, instance.dateSelected);
-        instance.hide();
+        instance.dateSelected = new Date(instance.currentYear, instance.currentMonth)
+        instance.formatter(instance.el, instance.dateSelected)
+        instance.hide()
 
-        const sibling = instance.sibling;
+        const sibling = instance.sibling
         if (sibling) { //페어가 존재하는 경우
             // 두 달력의 최소 날짜, 최대날짜 재조정
-            adjustDateRanges({instance: instance});
+            adjustDateRanges({ instance: instance })
         }
     }
-    renderCalendar(instance);
-    instance.onMonthChange(instance);
+    renderCalendar(instance)
+    instance.onMonthChange(instance)
 }
 
 /*
@@ -880,9 +875,9 @@ function changeMonthYear(classList, instance, year, overlayMonthIndex) {
  */
 function calculatePosition(instance) {
     // Don't try to position the calendar if its el is <body> or <html>.
-    if (instance.isBody) return;
+    if (instance.isBody) return
 
-    const centered = instance.position["centered"];
+    const centered = instance.position['centered']
 
     /*
       This positions the calendar `fixed` in the middle of the screen,
@@ -891,15 +886,15 @@ function calculatePosition(instance) {
     if (centered) return calendarContainer.classList.add('qs-centered')
 
     // Get the measurements.
-    const elRects = instance.el.getBoundingClientRect();
+    const elRects = instance.el.getBoundingClientRect()
 
     // Calculate the position!
-    const topStyle = elRects.top + elRects.height + scrollY + 'px';
-    const leftStyle = elRects.left + 'px';
+    const topStyle = elRects.top + elRects.height + scrollY + 'px'
+    const leftStyle = elRects.left + 'px'
 
     // Set the styles.
-    calendarContainer.style.setProperty('top', topStyle);
-    calendarContainer.style.setProperty('left', leftStyle);
+    calendarContainer.style.setProperty('top', topStyle)
+    calendarContainer.style.setProperty('left', leftStyle)
 }
 
 /*
@@ -938,7 +933,7 @@ function stripDay(dateOrNum) {
 function hideCal(instance) {
     if (isShow()) {
         if (instance == null) {
-            instance = instanceList.find(instance => instance.el === calendarContainer.showing);
+            instance = instanceList.find(instance => instance.el === calendarContainer.showing)
         }
 
         instance.defaultView !== 'overlay' && toggleOverlay(true, instance)
@@ -950,7 +945,7 @@ function hideCal(instance) {
 
         instance.onHide(instance)
     }
-    calendarContainer.showing = undefined;
+    calendarContainer.showing = undefined
 }
 
 /*
@@ -958,13 +953,13 @@ function hideCal(instance) {
  * onShow 콜백 실행
  */
 function showCal(instance) {
-    renderCalendar(instance);
-    calendarContainer.showing = instance.el;
+    renderCalendar(instance)
+    calendarContainer.showing = instance.el
 
-    calendarContainer.classList.remove('qs-hidden');
-    instance.defaultView === 'overlay' && toggleOverlay(false, instance);
-    calculatePosition(instance);
-    instance.onShow(instance);
+    calendarContainer.classList.remove('qs-hidden')
+    instance.defaultView === 'overlay' && toggleOverlay(false, instance)
+    calculatePosition(instance)
+    instance.onShow(instance)
 }
 
 /*
@@ -997,13 +992,13 @@ function toggleOverlay(closing, instance) {
    월 선택창에서 선택하였을때
  */
 function choiceMonth(instance, select, overlayMonthIndex) {
-    const badDate = isNaN(+new Date().setFullYear(select.value || undefined));
-    const value = badDate ? null : select.value;
+    const badDate = isNaN(+new Date().setFullYear(select.value || undefined))
+    const value = badDate ? null : select.value
 
     if (overlayMonthIndex) {
-        changeMonthYear(null, instance, value, overlayMonthIndex);
+        changeMonthYear(null, instance, value, overlayMonthIndex)
     } else if (!badDate && !select.classList.contains('qs-disabled')) {
-        changeMonthYear(null, instance, value);
+        changeMonthYear(null, instance, value)
     }
 }
 
@@ -1011,9 +1006,8 @@ function choiceMonth(instance, select, overlayMonthIndex) {
  *  Returns the explicit type of something as a string.
  */
 function type(thing) {
-    return ({}).toString.call(thing);
+    return ({}).toString.call(thing)
 }
-
 
 ///////////////////
 // EVENT HANDLER //
@@ -1026,21 +1020,20 @@ function type(thing) {
  *  all datepicker instances have had their `remove` method called.
  */
 function oneHandler(e) {
-    const type = e.type;
-    let target = e.target;
-    const classList = target.classList;
+    const type = e.type
+    let target = e.target
+    const classList = target.classList
     const instance = instanceList.find(function (picker) {
-        if (target === picker.el) return true;
-        if (calendarContainer.contains(target) === false) return false;
-        return !!(isShow() && calendarContainer.showing === picker.el);
+        if (target === picker.el) return true
+        if (calendarContainer.contains(target) === false) return false
+        return !!(isShow() && calendarContainer.showing === picker.el)
 
-    });
+    })
 
     const onCal = instance && calendar.contains(target)
 
     // Ignore event handling for mobile devices when disableMobile is true.
     if (instance && instance.isMobile && instance.disableMobile) return
-
 
     ////////////
     // EVENTS //
@@ -1048,53 +1041,53 @@ function oneHandler(e) {
 
     if (type === 'click') {
         //인스턴스가 존재하지 않는경우 == 다른곳 클릭 => 달력 숨기기
-        if (!instance) return hideCal();
+        if (!instance) return hideCal()
 
-        const disableYearOverlay = instance.disableYearOverlay;
-        const select = calendar.querySelector('.qs-overlay-year');
-        const overlayClosed = !!calendar.querySelector('.qs-hidden');
-        const monthYearClicked = calendar.querySelector('.qs-month-year')?.contains(target); //제어창의 x년x월을 선택하였는지
-        const newMonthIndex = target.dataset.monthNum; // 오버레이창의 월('0'~'11')
+        const disableYearOverlay = instance.disableYearOverlay
+        const select = calendar.querySelector('.qs-overlay-year')
+        const overlayClosed = !!calendar.querySelector('.qs-hidden')
+        const monthYearClicked = calendar.querySelector('.qs-month-year')?.contains(target) //제어창의 x년x월을 선택하였는지
+        const newMonthIndex = target.dataset.monthNum // 오버레이창의 월('0'~'11')
 
         // Anything but the calendar was clicked.
         if (instance.isBody && !onCal) {
             // Show / hide a calendar whose el is html or body.
             const calendarClosed = calendarContainer.classList.contains('qs-hidden');
-            (calendarClosed ? showCal : hideCal)(instance);
+            (calendarClosed ? showCal : hideCal)(instance)
 
             // 제어창의 방향(◀, ▶)표시
         } else if (classList.contains('qs-arrow') && !classList.contains('qs-disabled')) {
-            changeMonthYear(classList, instance);
+            changeMonthYear(classList, instance)
 
             // 달력의 년월 선택기 || 월 선택창 x(닫기) 버튼
         } else if (monthYearClicked || classList.contains('qs-close')) {
             if (!disableYearOverlay) {
                 if (instance.isMonthPicker) {
-                    instance.hide();
+                    instance.hide()
                 } else {
-                    toggleOverlay(!overlayClosed, instance);
+                    toggleOverlay(!overlayClosed, instance)
                 }
             }
 
             // 오버레이창에서 월을 선택한 경우
         } else if (newMonthIndex) {
-            if (classList.contains('qs-disabled')) return;
-            choiceMonth(instance, select, newMonthIndex);
+            if (classList.contains('qs-disabled')) return
+            choiceMonth(instance, select, newMonthIndex)
 
             // Clicking a disabled square or disabled overlay submit button.
         } else if (classList.contains('qs-disabled')) {
 
             // 달력에서 일을 선택한 경우
         } else if (classList.contains('qs-num')) {
-            const num = target.textContent;
-            const monthDirection = +target.dataset.direction; // -1, 0, or 1.
-            const dateInQuestion = new Date(instance.currentYear, instance.currentMonth + monthDirection, num);
+            const num = target.textContent
+            const monthDirection = +target.dataset.direction // -1, 0, or 1.
+            const dateInQuestion = new Date(instance.currentYear, instance.currentMonth + monthDirection, num)
 
             //이전 또는 다음 달의 날짜를 클릭한 경우
             if (monthDirection) {
-                instance.currentYear = dateInQuestion.getFullYear();
-                instance.currentMonth = dateInQuestion.getMonth();
-                instance.currentMonthName = months[instance.currentMonth];
+                instance.currentYear = dateInQuestion.getFullYear()
+                instance.currentMonth = dateInQuestion.getMonth()
+                instance.currentMonthName = months[instance.currentMonth]
             }
 
             if (+dateInQuestion === +instance.dateSelected) {
@@ -1103,16 +1096,16 @@ function oneHandler(e) {
                 selectDay(target, instance)
             }
         } else if (target === instance.el) { //달력 열기
-            showCal(instance);
+            showCal(instance)
         }
     } else if (type === 'focusin' && instance && !onCal && !instance.nonInput) {
-        target.blur();
+        target.blur()
     } else if (type === 'change') {
-        target.blur();
+        target.blur()
         // Avoid applying these restrictions to other inputs on the page. 다른 요소에 피해 안주기 위한 예방.
-        if (!instance || !calendar.contains(target)) return;
+        if (!instance || !calendar.contains(target)) return
 
-        changeSelectMonth(instance, target.value);
+        changeSelectMonth(instance, target.value)
     }
 }
 
@@ -1124,7 +1117,6 @@ function removeEvents(node, listener) {
         node.removeEventListener(event, listener)
     })
 }
-
 
 //////////////////////
 // INSTANCE METHODS //
@@ -1145,38 +1137,38 @@ function hide() {
  * this 인스턴스
  */
 function setDate(newDate, changeCalendar = true) {
-    const date = (()=> {
+    const date = (() => {
         if (this.isMonthPicker) {
-            return stripDay(newDate);
+            return stripDay(newDate)
         } else {
-            return stripTime(newDate); //시간 제거한 새로운 날짜 객체
+            return stripTime(newDate) //시간 제거한 새로운 날짜 객체
         }
     })()
-    const sibling = this.sibling;
+    const sibling = this.sibling
 
     // Removing the selected date.
     if (newDate == null) {
         // Remove the date.
-        this.dateSelected = undefined;
+        this.dateSelected = undefined
 
         // Clear the associated input field.
-        setCalendarInputValue(this.el, this, true);
+        setCalendarInputValue(this.el, this, true)
 
         // DateRange processing!
         if (sibling) {
-            adjustDateRanges({instance: this, deselect: true})
-            renderCalendar(sibling);
+            adjustDateRanges({ instance: this, deselect: true })
+            renderCalendar(sibling)
         }
 
         // Re-render the calendar to clear the selected date.
-        renderCalendar(this);
+        renderCalendar(this)
 
         // Return the instance to enable chaining methods.
-        return this;
+        return this
 
         // Date isn't undefined or null but still falsey.
     } else if (!dateCheck(newDate)) {
-        throw new Error('`setDate` needs a JavaScript Date object.');
+        throw new Error('`setDate` needs a JavaScript Date object.')
     }
 
     // Check if the date is selectable.
@@ -1184,43 +1176,43 @@ function setDate(newDate, changeCalendar = true) {
         this.disabledDates[+date] ||
         date < this.minDate ||
         date > this.maxDate
-    ) throw new Error("You can't manually set a date that's disabled.")
+    ) throw new Error(`You can't manually set a date that's disabled.`)
 
     // Keep track of the new date.
-    this.dateSelected = date;
+    this.dateSelected = date
 
     /*
       These properties indicate to the instance where the calendar is currently at.
       Only change them if we're also navigating to the new date in the UI.
     */
     if (changeCalendar) {
-        this.currentYear = date.getFullYear();
-        this.currentMonth = date.getMonth();
-        this.currentMonthName = this.months[date.getMonth()];
+        this.currentYear = date.getFullYear()
+        this.currentMonth = date.getMonth()
+        this.currentMonthName = this.months[date.getMonth()]
     }
 
-    setCalendarInputValue(this.el, this);
+    setCalendarInputValue(this.el, this)
 
     if (sibling) {
         // Adjust other date properties and re-render the sibling to show the same month as the other.
-        adjustDateRanges({instance: this});
+        adjustDateRanges({ instance: this })
     }
 
-    return this;
+    return this
 }
 
 /*
  *  Programmatically changes the minimum selectable date.
  */
 function setMin(date) {
-    return changeMinOrMax(this, date, true);
+    return changeMinOrMax(this, date, true)
 }
 
 /*
  *  Programmatically changes the maximum selectable date.
  */
 function setMax(date) {
-    return changeMinOrMax(this, date);
+    return changeMinOrMax(this, date)
 }
 
 /*
@@ -1361,7 +1353,7 @@ function getRange() {
 
     return {
         start: first.dateSelected,
-        end: second.dateSelected
+        end: second.dateSelected,
     }
 }
 
@@ -1371,11 +1363,11 @@ function getRange() {
  *  Removes the event listeners if this is the last instance.
  */
 function remove() {
-    const sibling = this.sibling;
-    const _this = this;
+    const sibling = this.sibling
+    const _this = this
 
     // Remove this instance from the list.
-    instanceList = instanceList.filter(instance => instance !== _this);
+    instanceList = instanceList.filter(instance => instance !== _this)
 
     // Remove siblings references.
     if (sibling) delete sibling.sibling
@@ -1388,8 +1380,8 @@ function remove() {
 
     // If this was the last datepicker in the list, remove the event handlers.
     if (instanceList.length === 0) {
-        events.forEach(event => document.removeEventListener(event, oneHandler));
-        calendarContainer.remove();
+        events.forEach(event => document.removeEventListener(event, oneHandler))
+        calendarContainer.remove()
     }
 }
 
@@ -1422,7 +1414,7 @@ function instanceToggleOverlay() {
 }
 
 function isShow() {
-    return !calendarContainer.classList.contains('qs-hidden');
+    return !calendarContainer.classList.contains('qs-hidden')
 }
 
 export default datepicker

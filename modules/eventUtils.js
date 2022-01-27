@@ -7,30 +7,31 @@
 export function inputOnlyNumber(input) {
     function removeNotNumber(str) {
         if (!Number.isInteger(str)) {
-            str = str.replace( /[^0-9]/g, '')
+            str = str.replace(/[^0-9]/g, '')
         }
-        return str;
+        return str
     }
+
     function addEvent(e) {
         if (e.type === 'keydown') {
-            const key = e.key;
-            if (e.ctrlKey && key === 'v') return;
+            const key = e.key
+            if (e.ctrlKey && key === 'v') return
 
-            const allowKey = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End', 'Tab']);
-            const num = Number.parseInt(key);
+            const allowKey = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End', 'Tab'])
+            const num = Number.parseInt(key)
 
-            if (! (Number.isInteger(num) || allowKey.has(key))) {
-                e.preventDefault();
+            if (!(Number.isInteger(num) || allowKey.has(key))) {
+                e.preventDefault()
             }
         } else if (e.type === 'paste') {
-            this.value += removeNotNumber(e.clipboardData.getData('Text'));
-            e.preventDefault();
+            this.value += removeNotNumber(e.clipboardData.getData('Text'))
+            e.preventDefault()
         } else if (e.type === 'keyup') {
-            this.value = removeNotNumber(this.value);
+            this.value = removeNotNumber(this.value)
         }
     }
 
-    ['paste', 'keydown', 'keyup'].forEach(event => input.addEventListener(event, addEvent));
+    ['paste', 'keydown', 'keyup'].forEach(event => input.addEventListener(event, addEvent))
 }
 
 /**
@@ -39,17 +40,17 @@ export function inputOnlyNumber(input) {
  * @param area 변할 체크박스가 포함된 영역
  */
 export function changeAllCheckBox(allCheckBox, area) {
-    if (allCheckBox.tagName !== 'INPUT' || allCheckBox.type !== 'checkbox') return;
-    allCheckBox.addEventListener('change', function (e){
-        const checkBox = e.target;
-        area.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = checkBox.checked);
-    });
+    if (allCheckBox.tagName !== 'INPUT' || allCheckBox.type !== 'checkbox') return
+    allCheckBox.addEventListener('change', function (e) {
+        const checkBox = e.target
+        area.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = checkBox.checked)
+    })
 
     area.addEventListener('change', function (e) {
-        const checkBox = e.target;
-        if (checkBox.tagName !== 'INPUT' || checkBox.type !== 'checkbox') return;
+        const checkBox = e.target
+        if (checkBox.tagName !== 'INPUT' || checkBox.type !== 'checkbox') return
 
-        allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll('input[type=checkbox]') ).every(cb => cb.checked);
+        allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll('input[type=checkbox]')).every(cb => cb.checked)
     })
 }
 
@@ -58,8 +59,8 @@ export function changeAllCheckBox(allCheckBox, area) {
  * @param {HTMLFormElement} form
  */
 export function preventSubmitForm(form) {
-    form.addEventListener('submit', function (e){
-        e.preventDefault();
+    form.addEventListener('submit', function (e) {
+        e.preventDefault()
     })
 }
 
@@ -69,13 +70,15 @@ export function preventSubmitForm(form) {
  */
 export function preventInput(input) {
     function focus(e) {
-        e.target.blur();
+        e.target.blur()
     }
+
     function paste(e) {
-        e.preventDefault();
+        e.preventDefault()
     }
-    input.addEventListener('focus', focus);
-    input.addEventListener('paste', paste);
+
+    input.addEventListener('focus', focus)
+    input.addEventListener('paste', paste)
 }
 
 /**
@@ -84,22 +87,22 @@ export function preventInput(input) {
  */
 export function fixedCheckLength(parentElement) {
     parentElement.querySelectorAll('.checkLength').forEach(input => {
-        const maxLength = input.maxLength;
-        const span = input.parentElement.querySelector('span.length');
+        const maxLength = input.maxLength
+        const span = input.parentElement.querySelector('span.length')
 
-        input.addEventListener('input', function (){
+        input.addEventListener('input', function () {
             if (maxLength && this.value.length > maxLength) {
-                this.value = this.value.substring(0, maxLength);
+                this.value = this.value.substring(0, maxLength)
             }
-            if (span == null) return;
-            span.textContent = this.value.length;
+            if (span == null) return
+            span.textContent = this.value.length
         })
-    });
+    })
 
-    //nextElementSibling
-    /*
-    <div style="display: inline-block">
-        <span> 0</span><span> /max</span>
+    /* ex)
+    <div>
+        <input class"checkLength" maxlength="30">
+        <span class="length">0</span><span> /max</span>
     </div>
     */
 }
@@ -109,18 +112,18 @@ export function fixedCheckLength(parentElement) {
  * 부모 element에 부여하여 공통 처리
  */
 export function flexibleCheckLength(parentElement) {
-    parentElement.addEventListener('input', function (e){
-        e.preventDefault();
+    parentElement.addEventListener('input', function (e) {
+        e.preventDefault()
 
-        const target = e.target;
-        if (!target.classList.contains('checkLength')) return;
-        const maxLength = target.maxLength;
-        const span = target.parentElement.querySelector('span.length');
+        const target = e.target
+        if (!target.classList.contains('checkLength')) return
+        const maxLength = target.maxLength
+        const span = target.parentElement.querySelector('span.length')
 
         if (maxLength && target.value.length > maxLength) {
-            target.value = target.value.substring(0, maxLength);
+            target.value = target.value.substring(0, maxLength)
         }
-        if (span == null) return;
-        span.textContent = target.value.length;
+        if (span == null) return
+        span.textContent = target.value.length
     })
 }

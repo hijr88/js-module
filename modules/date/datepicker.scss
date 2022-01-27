@@ -1,4 +1,5 @@
 @use "sass:math";
+
 $width: 15.625em;
 $radius: $width * .016891;
 $transition: .3s;
@@ -24,7 +25,7 @@ $lightblue: lightblue;
   border-radius: $radius;
   overflow: hidden;
   background: white;
-  box-shadow: 0 ($width * .08) ($width * .08) ($width * -.06) rgba(0,0,0,.3);
+  box-shadow: 0 ($width * .08) ($width * .08) ($width * -.06) rgba(0, 0, 0, .3);
 
   * {
     box-sizing: border-box;
@@ -46,7 +47,7 @@ $lightblue: lightblue;
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,.75);
+  background: rgba(0, 0, 0, .75);
   color: white;
   width: 100%;
   height: 100%;
@@ -99,7 +100,7 @@ $lightblue: lightblue;
     padding: .5em;
     margin: 0 auto auto;
     cursor: pointer;
-    background: rgba(128,128,128,.4);
+    background: rgba(128, 128, 128, .4);
     text-align: center;
 
     &.qs-disabled {
@@ -123,9 +124,11 @@ $lightblue: lightblue;
     cursor: pointer;
     opacity: .5;
     transition: opacity math.div($transition, 2);
+
     &.active, &:hover:not(.qs-disabled) {
       opacity: 1;
     }
+
     &.qs-disabled {
       cursor: not-allowed;
       opacity: 0.19;
@@ -166,7 +169,7 @@ $lightblue: lightblue;
       border-left-color: black;
     }
 
-    background: rgba(0,0,0,.1);
+    background: rgba(0, 0, 0, .1);
   }
 
   &:after {
@@ -333,13 +336,10 @@ $lightblue: lightblue;
 }
 
 .qs-square.일.qs-num {
-  color:red
+  color: red
 }
 
-input[data-name=date]
-,input[data-name=beginDate]
-,input[data-name=startDate]
-,input[data-name=endDate] {
+input[data-name=date], input[data-name=beginDate], input[data-name=startDate], input[data-name=endDate] {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA7AAAAOwBeShxvQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF5SURBVFiF7dexThVBFAbgDy/BUJiLgCINBkxIpAQ7Y4gxxobKjhLiA9j6AjyCjVFKKEnoKAgPQE2BIUQtaDRBgUgIXi12FhYy6x3I3Wixf3IyyTn/nP/fmc3OLDXS8QSDCbw7gdtRjKCF9wncD4E7ktL4RqKBJrrQdwVus5MGKkNXJPcMcxh3brAXE9jHTpueD2QrtYWfIdfCtmx71v82+VUg/64oWpgvE7+JAxxhBv24HeJxaLBayJXFWuBOFXL9eIlj/EBPzMBkmLgcqQ3jFG/L3BewiBMMRGorQWMyT3QXirfCeBCZuIeH+JJg4DUW8C1Sy3vnWhcMtMPHRN73EEmIGRiU7V8ViG3LGaZV9/ZfjulcNLYCu9i81vO1xyOMlhXzFXhXkbjQ+8IK/PNPcW2gNlAbqA38Vwby8/tuhXpDYfyaJ4qX0gY+4x7eYAO/OiTcwFPZRWUP98t6v8Ch6o7hQzwvCsau5WOYlfhncwV8wpLsuK9xhj9OMoHtvg57HQAAAABJRU5ErkJggg==");
   background-repeat: no-repeat;
   background-position: calc(100% - 8px);
