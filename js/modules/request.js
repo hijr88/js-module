@@ -22,7 +22,6 @@ const request = (() => {
 
     let pool = 0
     async function getResponse(url, method, headers, body, failMessage) {
-
         if (method.toLowerCase() === 'get') {
             console.log(`url = '${url}'`)
         } else {
@@ -61,13 +60,13 @@ const request = (() => {
             })()
 
             if (data['resultCd'] !== '0') {
-                if (failMessage)
-                    alert(failMessage)
-                else if (data['failMessage'])
+                if (data['failMessage'])
                     alert(data['failMessage'])
+                else if (failMessage)
+                    alert(failMessage)
                 else
                     alert('Error!')
-                throw 'Server Error'
+                throw 'Error'
             }
 
             return data

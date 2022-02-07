@@ -1,18 +1,17 @@
-const path = require("path");
-const JS_ROOT = './src/main/webapp/js';
-const MODULE_DIR = './modules';
+const path = require('path');
+const jsDir = './js';
 
-module.exports = (env) => {
+module.exports = () => {
 
     return {
         target: 'web',
-        mode: env["production"] ? 'production' : 'development',
+        mode: process.env.NODE_ENV,
         entry: {
-            'rcs/brandRequest':   [JS_ROOT + '/src/rcs/brand/request/index.js'],
+            'index': [jsDir + '/src/index.js']
         },
         output: {
             publicPath: '/',
-            path: path.resolve(__dirname, JS_ROOT + '/dist'),
+            path: path.resolve(__dirname, jsDir + '/dist'),
             filename: '[name].js',
             clean: true,
             environment: {
@@ -22,8 +21,8 @@ module.exports = (env) => {
                 destructuring: false,
                 dynamicImport: false,
                 forOf: false,
-                module: false,
-            },
+                module: false
+            }
         },
         module: {
             rules: [
@@ -31,61 +30,60 @@ module.exports = (env) => {
                     test: /\.js$/,
                     exclude: /node_modules/,
                     use: {
-                        loader: "babel-loader"
-                    },
+                        loader: 'babel-loader'
+                    }
                 },
                 {
                     test: /\.(sa|sc|c)ss$/,
                     use: [
-                        "style-loader",
+                        'style-loader',
                         {
-                            loader: "css-loader",
+                            loader: 'css-loader',
                             options: {
                                 url: false
                             }
                         },
                         'sass-loader'
-                    ],
+                    ]
                 }
-            ],
+            ]
         },
         optimization: {
             runtimeChunk: {
-                name: "runtime"
+                name: 'runtime'
             },
             splitChunks: {
-                name: "vendor",
-                chunks: "all"
-            },
+                name: 'vendor',
+                chunks: 'all'
+            }
         },
         resolve: {
             alias: {
-                '@modules': path.resolve(__dirname, MODULE_DIR),
-                '@css': path.resolve(__dirname, 'src/main/webapp/css'),
+                '@modules': path.resolve(__dirname, jsDir + '/modules')
             },
-            modules: [path.resolve(__dirname, 'src/main/webapp'), 'node_modules'],
-            extensions: ['.js'],
+            modules: ['node_modules'],
+            extensions: ['.js']
         },
         plugins: [],
         devServer: {
-            host: "localhost",
+            host: 'localhost',
             port: 9090,
             proxy: {
-                '**' : "http://localhost:8080"
+                '**': 'http://localhost:8080'
             },
 
             hot: true,
             open: false,
             devMiddleware: {
-                writeToDisk: false,
+                writeToDisk: false
             },
             static: [
                 {
                     serveIndex: true,
-                    watch: true,
+                    watch: true
                 }
-            ],
+            ]
         },
-        devtool: env["production"] ? false : 'source-map'
-    }
+        devtool: process.env.NODE_ENV === 'production' ? false : 'source-map'
+    };
 };
