@@ -1198,6 +1198,10 @@ function setDate(newDate, changeCalendar = true) {
         adjustDateRanges({ instance: this })
     }
 
+    if (this.isMonthPicker) {
+        this.onMonthChange(this);
+    }
+
     return this
 }
 
