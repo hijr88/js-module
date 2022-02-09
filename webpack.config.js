@@ -1,5 +1,6 @@
 const path = require('path');
 const jsDir = './js';
+const cssDir = './css'
 
 module.exports = () => {
 
@@ -43,6 +44,7 @@ module.exports = () => {
                                 url: false
                             }
                         },
+                        'postcss-loader',
                         'sass-loader'
                     ]
                 }
@@ -59,7 +61,8 @@ module.exports = () => {
         },
         resolve: {
             alias: {
-                '@modules': path.resolve(__dirname, jsDir + '/modules')
+                '@modules': path.resolve(jsDir + '/modules'),
+                '@css': path.resolve(cssDir)
             },
             modules: ['node_modules'],
             extensions: ['.js']
