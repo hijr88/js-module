@@ -81,6 +81,8 @@ export default function paging({
                 const page = await findPage(params)
                 cachedCount = page['totalElements']
 
+                history.replaceState(null, null, '?' + toQueryString(getPageInfo()))
+
                 printList(page)
                 if (usePagination === true) {
                     if (customPagination) {
@@ -89,7 +91,6 @@ export default function paging({
                         printButton(page, pageRange)
                     }
                 }
-                history.replaceState(null, null, '?' + toQueryString(getPageInfo()))
             },
             getPageNumber: function () {
                 return cachedPageNumber
