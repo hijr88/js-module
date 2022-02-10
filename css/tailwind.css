@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*
+이 파일은 js에서 import 할 때 필요한것.
+npx tailwindcss로 빌드 할때는 필요 없음
+*/

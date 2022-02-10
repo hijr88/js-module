@@ -4,13 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "b": "cross-env NODE_ENV=production webpack --env=production",
-    "w": "cross-env NODE_ENV=development webpack -w --env=development",
-    "dev": "cross-env NODE_ENV=development webpack serve --env=development",
+    "b": "cross-env NODE_ENV=production webpack",
+    "w": "cross-env NODE_ENV=development webpack -w",
+    "dev": "cross-env NODE_ENV=development webpack serve",
 
     "watch": "concurrently --kill-others-on-fail \"npm run w\" \"npx tailwindcss -o ./css/dist/tailwind.css --watch\"",
     "build": "concurrently --kill-others-on-fail \"npm run b\" \"npx tailwindcss -o ./css/dist/tailwind.css --minify\""
-
   },
   "keywords": [],
   "author": "yh",
