@@ -1,37 +1,105 @@
 //공통적으로 사용될만한 이벤트 모음
 
+import { isNumber } from '@modules/validator';
+
 /**
  * 입력창(input) 숫자만 허용하기
  * @param {HTMLInputElement} input 이벤트 추가할 input
+ * @param allowPoint 소수점 허용
  */
-export function inputOnlyNumber(input) {
-    function removeNotNumber(str) {
-        if (!Number.isInteger(str)) {
-            str = str.replace(/[^0-9]/g, '')
-        }
-        return str
-    }
+export function inputOnlyNumber(input, allowPoint = false) {
+    const allowKey = new Set([
+        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End', 'Tab', 'paste',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-']);
 
-    function addEvent(e) {
-        if (e.type === 'keydown') {
-            const key = e.key
-            if (e.ctrlKey && key === 'v') return
+    function onInput(e) {
+        const target = e.target;
+        const value = target.value;
+        const selectionStart = target.selectionStart;
+        const data = e.data;
 
-            const allowKey = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Home', 'End', 'Tab'])
-            const num = Number.parseInt(key)
+        const min = isNumber(e.target.min) ? Number(e.target.min) : null;
+        const max = isNumber(e.target.max) ? Number(e.target.max) : null;
 
-            if (!(Number.isInteger(num) || allowKey.has(key))) {
-                e.preventDefault()
+        if ([''].includes(value)) { //값이 없으면 0 또는 min
+            target.value = (min <= 0 && 0 <= max) ? '0' : min;
+
+        } else if (['-', '-0', '0-'].includes(value)) {
+            if (min >= 0) {
+                target.value = '0';
+            } else {
+                target.value = '-';
             }
-        } else if (e.type === 'paste') {
-            this.value += removeNotNumber(e.clipboardData.getData('Text'))
-            e.preventDefault()
-        } else if (e.type === 'keyup') {
-            this.value = removeNotNumber(this.value)
+
+        } else if (['00'].includes(value)) {
+            target.value = '0';
+
+        } else if (isNumber(value)) { //숫자인 경우
+            //유효성 체크
+            if (max != null && Number(value) > max) {
+                target.value = max;
+                return;
+            } else if (min != null && Number(value) < min) {
+                target.value = min;
+                return;
+            }
+
+            const v = value.replace(/^(-?)0+/,'$1');
+            if (allowPoint === false) {
+                target.value = Number(v).toFixed(0);
+            } else {
+                target.value = v;
+            }
+            target.setSelectionRange(selectionStart, selectionStart);
+
+        } else { //숫자가 아닌경우
+            //(한글, 이모지, 복붙) 처리
+            if (e.inputType === 'insertFromPaste') {
+                const n = target.value.length - target.oldValue.length;
+                target.value = e.target.oldValue;
+                target.setSelectionRange(selectionStart - n, selectionStart - n);
+            } else {
+                target.value = value.replaceAll(data, '');
+                target.setSelectionRange(selectionStart - 1, selectionStart - 1);
+            }
         }
     }
 
-    ['paste', 'keydown', 'keyup'].forEach(event => input.addEventListener(event, addEvent))
+    /**
+     * (한글, 이모지) 여기서 못거름 onInput에서 처리
+     */
+    function onKeyDown(e) {
+        const key = e.key;
+        const value = e.target.value;
+
+        if (e.ctrlKey && key === 'v') {
+            e.target.oldValue = e.target.value;
+            return;
+        }
+
+        if (allowKey.has(key) === false) {
+            e.preventDefault();
+            return;
+        }
+
+        if (key === '-' && value.includes('-')) {
+            e.preventDefault();
+            return;
+        }
+
+        if (key === '.') {
+            if (allowPoint) {
+                if (value.includes('.')) {
+                    e.preventDefault();
+                }
+            } else {
+                e.preventDefault();
+            }
+        }
+    }
+
+    input.addEventListener('keydown', onKeyDown);
+    input.addEventListener('input', onInput);
 }
 
 /**

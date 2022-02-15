@@ -73,10 +73,10 @@ export function isValidTr(e) {
 
 /**
  * 1. 문자열도 숫자로 인식하도록 하고
- * 2. 자동 형변환을 이용해서 숫자가 아닌 값은 거르기
+ * 2. 숫자가 아닌 값은 거르기
  * @param n
  * @return {boolean}
  */
 export function isNumber(n) {
-    return !isNaN(parseFloat(n)) && !isNaN(n - 0)
+    return !isNaN(parseFloat(n)) && isFinite(n);
 }
