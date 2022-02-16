@@ -35,11 +35,12 @@ export function isEmpty(obj) {
     if (obj == null) {
         return true
     } else if (isPrimitive(obj)) {
-        return String(obj).trim() === ''
+        return String(obj) === ''
     } else if (Array.isArray(obj)) {
         return obj.length === 0
     } else if (isObjectLiteral(obj)) {
-        return Object.keys(obj).length === 0
+        if (Object.keys(obj).length === 0) return true;
+        return Object.keys(obj).every(k => isEmpty(obj[k]));
     }
     console.error('not supported type')
     return true
