@@ -70,11 +70,11 @@ const request = (() => {
             }
             //TODO-YH 에러코드에 따라 분기
             case 401: {
-                if (data.code === 1001) {
+                if (data.message) {
                     alert(data.message);
-                } else if ([1002, 1003].includes(data.code)) {
-                    alert(data.message);
-                    location.href = '/login';
+                    if (data['redirectUrl']) {
+                        location.href = data['redirectUrl'];
+                    }
                 }
                 //alert('세션이 종료되었습니다.');
                 //location.href = '/';

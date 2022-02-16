@@ -80,3 +80,10 @@ export function isValidTr(e) {
 export function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+/**
+ * 정수 체크
+ */
+export function isInteger(n) {
+    return isNumber(n) && Number.isInteger(Number(n));
+}
