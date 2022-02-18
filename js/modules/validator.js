@@ -7,7 +7,7 @@
  * @return {boolean}
  */
 export function validPhoneNumber(phoneNumber) {
-    return /^[0-9]{10,11}$/.test(phoneNumber)
+    return /^[0-9]{10,11}$/.test(phoneNumber);
 }
 
 /**
@@ -15,7 +15,7 @@ export function validPhoneNumber(phoneNumber) {
  * @return {boolean}
  */
 function isPrimitive(value) {
-    return value !== Object(value)
+    return value !== Object(value);
 }
 
 /**
@@ -23,7 +23,7 @@ function isPrimitive(value) {
  * @return {boolean}
  */
 export function isObjectLiteral(obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]'
+    return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 /**
@@ -33,17 +33,17 @@ export function isObjectLiteral(obj) {
  */
 export function isEmpty(obj) {
     if (obj == null) {
-        return true
+        return true;
     } else if (isPrimitive(obj)) {
-        return String(obj) === ''
+        return String(obj) === '';
     } else if (Array.isArray(obj)) {
-        return obj.length === 0
+        return obj.length === 0;
     } else if (isObjectLiteral(obj)) {
         if (Object.keys(obj).length === 0) return true;
         return Object.keys(obj).every(k => isEmpty(obj[k]));
     }
-    console.error('not supported type')
-    return true
+    console.error('not supported type');
+    return true;
 }
 
 /**
@@ -51,7 +51,7 @@ export function isEmpty(obj) {
  * @return {boolean}
  */
 export function isEnter(e) {
-    return e.key === 'Enter'
+    return e.key === 'Enter';
 }
 
 /**
@@ -61,15 +61,15 @@ export function isEnter(e) {
  * @return {boolean}
  */
 export function isValidTr(e) {
-    if (e.target.tagName === 'TBODY') return false
-    if (e.target.tagName === 'TR') return true
+    if (e.target.tagName === 'TBODY') return false;
+    if (e.target.tagName === 'TR') return true;
 
-    const td = e.target.closest('td')
+    const td = e.target.closest('td');
     if (td.querySelector('input[type=checkbox]')) {
-        e.stopPropagation()
-        return false
+        e.stopPropagation();
+        return false;
     }
-    return true
+    return true;
 }
 
 /**

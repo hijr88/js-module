@@ -1,29 +1,29 @@
-import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
-import 'events-polyfill'
-import _datepicker from './datepicker'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import 'events-polyfill';
+import _datepicker from './datepicker';
 
-dayjs.extend(customParseFormat)
+dayjs.extend(customParseFormat);
 
 export class DateUtil {
-    #date
+    #date;
 
     //https://day.js.org/docs/en/parse/string-format
     constructor(date = new Date(), formatString = undefined) {
         if (date instanceof Date) {
-            this.#date = dayjs(date)
+            this.#date = dayjs(date);
         } else if (typeof date === 'string') {
-            this.#date = dayjs(date, formatString)
+            this.#date = dayjs(date, formatString);
         } else if (date instanceof DateUtil) {
-            this.#date = dayjs(date.toDate())
+            this.#date = dayjs(date.toDate());
         } else if (Number.isInteger(date)) {
-            this.#date = dayjs(date)
+            this.#date = dayjs(date);
         } else {
-            throw 'not supported ' + Object.prototype.toString.call(date)
+            throw 'not supported ' + Object.prototype.toString.call(date);
         }
 
         if (this.#date.isValid() === false) {
-            throw 'Invalid Date'
+            throw 'Invalid Date';
         }
     }
 
@@ -33,7 +33,7 @@ export class DateUtil {
      * @return {string}
      */
     firstDayOfMonth(formatString = 'YYYY-MM-DD') {
-        return this.#date.startOf('month').format(formatString)
+        return this.#date.startOf('month').format(formatString);
     }
 
     /**
@@ -42,7 +42,7 @@ export class DateUtil {
      * @return {string}
      */
     lastDayOfMonth(formatString = 'YYYY-MM-DD') {
-        return this.#date.endOf('month').format(formatString)
+        return this.#date.endOf('month').format(formatString);
     }
 
     /**
@@ -52,20 +52,20 @@ export class DateUtil {
      * @return {DateUtil}
      */
     update(unit, value) {
-        return new DateUtil(this.#date.add(value, unit).toDate())
+        return new DateUtil(this.#date.add(value, unit).toDate());
     }
 
     //https://day.js.org/docs/en/display/format
     format(formatString) {
-        return this.#date.format(formatString)
+        return this.#date.format(formatString);
     }
 
     toDate() {
-        return this.#date.toDate()
+        return this.#date.toDate();
     }
 
     toString() {
-        return this.#date.format('YYYY-MM-DD HH:mm:ss')
+        return this.#date.format('YYYY-MM-DD HH:mm:ss');
     }
 }
 
@@ -75,7 +75,7 @@ export class DateUtil {
  * @return {string}
  */
 export function now(formatString = 'YYYY-MM-DD') {
-    return dayjs().format(formatString)
+    return dayjs().format(formatString);
 }
 
 /**
@@ -86,7 +86,7 @@ export function now(formatString = 'YYYY-MM-DD') {
  * @return {string}
  */
 export function dateFormatter(date, formatString = 'YYYY-MM-DD') {
-    return dayjs(date).format(formatString)
+    return dayjs(date).format(formatString);
 }
 
 /**
@@ -95,7 +95,7 @@ export function dateFormatter(date, formatString = 'YYYY-MM-DD') {
  * @return {Date}
  */
 export function parseDate(date, formatString = undefined) {
-    return new DateUtil(date, formatString).toDate()
+    return new DateUtil(date, formatString).toDate();
 }
 
 /**
@@ -116,7 +116,7 @@ export function datePicker({
     maxDate = new Date(),
     pairId = null,
     formatString = 'YYYY-MM-DD',
-    enableDeselect = false,
+    enableDeselect = false
 }) {
     const options = {
         showAllDates: true,
@@ -130,29 +130,29 @@ export function datePicker({
         //최소 날짜
         minDate: parseDate(minDate),
         //최대 날짜
-        maxDate: parseDate(maxDate),
-    }
-    if (options.dateSelected && options.minDate > options.dateSelected) options.dateSelected = options.minDate
-    if (options.dateSelected && options.maxDate < options.dateSelected) options.dateSelected = options.maxDate
+        maxDate: parseDate(maxDate)
+    };
+    if (options.dateSelected && options.minDate > options.dateSelected) options.dateSelected = options.minDate;
+    if (options.dateSelected && options.maxDate < options.dateSelected) options.dateSelected = options.maxDate;
 
-    if (pairId != null) options['id'] = pairId
+    if (pairId != null) options['id'] = pairId;
 
-    const datepicker = _datepicker(selector, options)
-    pickerAddEvent(datepicker)
+    const datepicker = _datepicker(selector, options);
+    pickerAddEvent(datepicker);
 
-    return datepicker
+    return datepicker;
 }
 
 function pickerAddEvent(picker) {
-    const el = picker.el
-    el.addEventListener('initDate', () => picker.setDate(options.dateSelected))
+    const el = picker.el;
+    el.addEventListener('initDate', () => picker.setDate(options.dateSelected));
     el.addEventListener('updateDate', () => {
         try {
-            picker.setDate(parseDate(el.value))
+            picker.setDate(parseDate(el.value));
         } catch {
-            picker.setDate(options.dateSelected)
+            picker.setDate(options.dateSelected);
         }
-    })
+    });
 }
 
 export function monthPicker({
@@ -162,15 +162,15 @@ export function monthPicker({
     maxDate = new Date(),
     pairId = null,
     formatString = 'YYYY-MM',
-    onMonthChange,
+    onMonthChange
 }) {
-    const toYearMonth = (date) => new Date(date.getFullYear(), date.getMonth())
-    initialDate = toYearMonth(parseDate(initialDate))
-    minDate = toYearMonth(parseDate(minDate))
-    maxDate = toYearMonth(parseDate(maxDate))
+    const toYearMonth = (date) => new Date(date.getFullYear(), date.getMonth());
+    initialDate = toYearMonth(parseDate(initialDate));
+    minDate = toYearMonth(parseDate(minDate));
+    maxDate = toYearMonth(parseDate(maxDate));
 
-    if (minDate > initialDate) initialDate = minDate
-    if (maxDate < initialDate) initialDate = maxDate
+    if (minDate > initialDate) initialDate = minDate;
+    if (maxDate < initialDate) initialDate = maxDate;
 
     const options = {
         defaultView: 'overlay',
@@ -187,13 +187,13 @@ export function monthPicker({
 
         isMonthPicker: true,
 
-        onMonthChange: onMonthChange,
-    }
+        onMonthChange: onMonthChange
+    };
 
-    if (pairId != null) options['id'] = pairId
+    if (pairId != null) options['id'] = pairId;
 
-    const datepicker = _datepicker(selector, options)
-    pickerAddEvent(datepicker)
+    const datepicker = _datepicker(selector, options);
+    pickerAddEvent(datepicker);
 
-    return datepicker
+    return datepicker;
 }

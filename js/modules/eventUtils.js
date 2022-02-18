@@ -44,7 +44,7 @@ export function inputOnlyNumber(input, allowPoint = false) {
                 return;
             }
 
-            const v = value.replace(/^(-?)0+/,'$1');
+            const v = value.replace(/^(-?)0+/, '$1');
             if (allowPoint === false) {
                 target.value = Number(v).toFixed(0);
             } else {
@@ -108,18 +108,18 @@ export function inputOnlyNumber(input, allowPoint = false) {
  * @param area 변할 체크박스가 포함된 영역
  */
 export function changeAllCheckBox(allCheckBox, area) {
-    if (allCheckBox.tagName !== 'INPUT' || allCheckBox.type !== 'checkbox') return
+    if (allCheckBox.tagName !== 'INPUT' || allCheckBox.type !== 'checkbox') return;
     allCheckBox.addEventListener('change', function (e) {
-        const checkBox = e.target
-        area.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = checkBox.checked)
-    })
+        const checkBox = e.target;
+        area.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = checkBox.checked);
+    });
 
     area.addEventListener('change', function (e) {
-        const checkBox = e.target
-        if (checkBox.tagName !== 'INPUT' || checkBox.type !== 'checkbox') return
+        const checkBox = e.target;
+        if (checkBox.tagName !== 'INPUT' || checkBox.type !== 'checkbox') return;
 
-        allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll('input[type=checkbox]')).every(cb => cb.checked)
-    })
+        allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll('input[type=checkbox]')).every(cb => cb.checked);
+    });
 }
 
 /**
@@ -128,8 +128,8 @@ export function changeAllCheckBox(allCheckBox, area) {
  */
 export function preventSubmitForm(form) {
     form.addEventListener('submit', function (e) {
-        e.preventDefault()
-    })
+        e.preventDefault();
+    });
 }
 
 /**
@@ -138,15 +138,15 @@ export function preventSubmitForm(form) {
  */
 export function preventInput(input) {
     function focus(e) {
-        e.target.blur()
+        e.target.blur();
     }
 
     function paste(e) {
-        e.preventDefault()
+        e.preventDefault();
     }
 
-    input.addEventListener('focus', focus)
-    input.addEventListener('paste', paste)
+    input.addEventListener('focus', focus);
+    input.addEventListener('paste', paste);
 }
 
 /**
@@ -155,17 +155,17 @@ export function preventInput(input) {
  */
 export function fixedCheckLength(parentElement) {
     parentElement.querySelectorAll('.checkLength').forEach(input => {
-        const maxLength = input.maxLength
-        const span = input.parentElement.querySelector('span.length')
+        const maxLength = input.maxLength;
+        const span = input.parentElement.querySelector('span.length');
 
         input.addEventListener('input', function () {
             if (maxLength && this.value.length > maxLength) {
-                this.value = this.value.substring(0, maxLength)
+                this.value = this.value.substring(0, maxLength);
             }
-            if (span == null) return
-            span.textContent = this.value.length
-        })
-    })
+            if (span == null) return;
+            span.textContent = this.value.length;
+        });
+    });
 
     /* ex)
     <div>
@@ -181,17 +181,17 @@ export function fixedCheckLength(parentElement) {
  */
 export function flexibleCheckLength(parentElement) {
     parentElement.addEventListener('input', function (e) {
-        e.preventDefault()
+        e.preventDefault();
 
-        const target = e.target
-        if (!target.classList.contains('checkLength')) return
-        const maxLength = target.maxLength
-        const span = target.parentElement.querySelector('span.length')
+        const target = e.target;
+        if (!target.classList.contains('checkLength')) return;
+        const maxLength = target.maxLength;
+        const span = target.parentElement.querySelector('span.length');
 
         if (maxLength && target.value.length > maxLength) {
-            target.value = target.value.substring(0, maxLength)
+            target.value = target.value.substring(0, maxLength);
         }
-        if (span == null) return
-        span.textContent = target.value.length
-    })
+        if (span == null) return;
+        span.textContent = target.value.length;
+    });
 }
