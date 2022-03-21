@@ -1,4 +1,4 @@
-const jsDir = './js/src';
+const jsDir = "./js/src";
 
 module.exports = {
   content: [jsDir + "/**/*.js", "./html/**/*.html"],
@@ -6,5 +6,5 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-  prefix: ''
-}
+  prefix: "",
+};
