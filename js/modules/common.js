@@ -92,9 +92,7 @@ export function isEnterExec(e, ...func) {
  * @return {Object}
  */
 function removeEmptyObject(obj) {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([, v]) => isEmpty(v) === false)
-  );
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => isEmpty(v) === false));
 }
 
 /**

@@ -107,12 +107,7 @@ const request = (() => {
    * @param {Object} headerOptions
    * @param {string} failMessage
    */
-  function get({
-    url,
-    data = undefined,
-    headerOptions = undefined,
-    failMessage = undefined,
-  }) {
+  function get({ url, data = undefined, headerOptions = undefined, failMessage = undefined }) {
     const headers = getHeaders(headerOptions);
     const queryString = serialize(data);
 
@@ -127,12 +122,7 @@ const request = (() => {
    * @param {Object} headerOptions
    * @param {string} failMessage
    */
-  async function post({
-    url,
-    data,
-    headerOptions = undefined,
-    failMessage = undefined,
-  }) {
+  async function post({ url, data, headerOptions = undefined, failMessage = undefined }) {
     const _h = {
       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
     };
@@ -150,13 +140,7 @@ const request = (() => {
    * @param {Object} headerOptions
    * @param {string} failMessage
    */
-  async function json({
-    url,
-    method,
-    data = {},
-    headerOptions = undefined,
-    failMessage = undefined,
-  }) {
+  async function json({ url, method, data = {}, headerOptions = undefined, failMessage = undefined }) {
     const _h = {
       "Content-Type": "application/json;charset=UTF-8",
     };
@@ -175,13 +159,7 @@ const request = (() => {
    * @param {Object} headerOptions
    * @param {string} failMessage
    */
-  async function formData({
-    url,
-    method,
-    formData,
-    headerOptions = undefined,
-    failMessage = undefined,
-  }) {
+  async function formData({ url, method, formData, headerOptions = undefined, failMessage = undefined }) {
     if (!(formData instanceof FormData)) throw "data is not a FormData";
 
     const _h = {};

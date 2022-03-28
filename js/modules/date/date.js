@@ -123,8 +123,7 @@ export function datePicker({
     enableDeselect: enableDeselect,
 
     //선택했을때 날자형식
-    formatter: (input, date) =>
-      (input.value = dateFormatter(date, formatString)),
+    formatter: (input, date) => (input.value = dateFormatter(date, formatString)),
 
     //초기 날짜
     dateSelected: initialDate ? parseDate(initialDate) : undefined,
@@ -133,10 +132,8 @@ export function datePicker({
     //최대 날짜
     maxDate: parseDate(maxDate),
   };
-  if (options.dateSelected && options.minDate > options.dateSelected)
-    options.dateSelected = options.minDate;
-  if (options.dateSelected && options.maxDate < options.dateSelected)
-    options.dateSelected = options.maxDate;
+  if (options.dateSelected && options.minDate > options.dateSelected) options.dateSelected = options.minDate;
+  if (options.dateSelected && options.maxDate < options.dateSelected) options.dateSelected = options.maxDate;
 
   if (pairId != null) options["id"] = pairId;
 
@@ -179,8 +176,7 @@ export function monthPicker({
     defaultView: "overlay",
 
     //선택했을때 날자형식
-    formatter: (input, date) =>
-      (input.value = dateFormatter(date, formatString)),
+    formatter: (input, date) => (input.value = dateFormatter(date, formatString)),
 
     //초기 날짜
     dateSelected: initialDate,

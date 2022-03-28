@@ -5,23 +5,20 @@
  * @param {string}  attrName   필드에 포함 될 데이터 속성 키, 기본값 data-name
  */
 export default function search(searchArea, attrName = "data-name") {
-  const f = Array.from(searchArea.querySelectorAll("[data-name]")).reduce(
-    (obj, el) => {
-      const name = el.getAttribute(attrName);
-      if (el.type === "radio") {
-        if (Array.isArray(obj[name])) {
-          obj[name].push(el);
-        } else {
-          obj[name] = [el];
-        }
+  const f = Array.from(searchArea.querySelectorAll("[data-name]")).reduce((obj, el) => {
+    const name = el.getAttribute(attrName);
+    if (el.type === "radio") {
+      if (Array.isArray(obj[name])) {
+        obj[name].push(el);
       } else {
-        if (obj.hasOwnProperty(name)) throw `${attrName}=${name} duplicate`;
-        obj[name] = el;
+        obj[name] = [el];
       }
-      return obj;
-    },
-    {}
-  );
+    } else {
+      if (obj.hasOwnProperty(name)) throw `${attrName}=${name} duplicate`;
+      obj[name] = el;
+    }
+    return obj;
+  }, {});
   const dateNames = ["date", "beginDate", "startDate", "endDate"];
   let cashedData = null;
 
@@ -104,14 +101,9 @@ export default function search(searchArea, attrName = "data-name") {
         newData[name] = checkedRadio.value.trim();
       } else {
         //data-value가 존재하는 경우 select의 값은 value가 아닌 data-value에 담긴 키로 조회
-        if (
-          element.tagName === "SELECT" &&
-          element.getAttribute("data-value") != null
-        ) {
+        if (element.tagName === "SELECT" && element.getAttribute("data-value") != null) {
           const key = element.getAttribute("data-value");
-          newData[name] = element
-            .querySelector("option:checked")
-            .getAttribute(key);
+          newData[name] = element.querySelector("option:checked").getAttribute(key);
         } else {
           newData[name] = element.value.trim();
         }
@@ -137,10 +129,7 @@ export default function search(searchArea, attrName = "data-name") {
           }
         }
       } else {
-        if (
-          element.tagName === "SELECT" &&
-          element.getAttribute("data-value") != null
-        ) {
+        if (element.tagName === "SELECT" && element.getAttribute("data-value") != null) {
           const key = element.getAttribute("data-value");
           const option = element.querySelector(`option[${key}="${obj[name]}"]`);
           if (option) option.selected = true;

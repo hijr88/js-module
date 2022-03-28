@@ -25,8 +25,7 @@ $lightblue: lightblue;
   border-radius: $radius;
   overflow: hidden;
   background: white;
-  box-shadow: 0 ($width * 0.08) ($width * 0.08) ($width * -0.06)
-    rgba(0, 0, 0, 0.3);
+  box-shadow: 0 ($width * 0.08) ($width * 0.08) ($width * -0.06) rgba(0, 0, 0, 0.3);
 
   * {
     box-sizing: border-box;

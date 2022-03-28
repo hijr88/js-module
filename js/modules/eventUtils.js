@@ -128,24 +128,17 @@ export function inputOnlyNumber(input, allowPoint = false) {
  * @param area 변할 체크박스가 포함된 영역
  */
 export function changeAllCheckBox(allCheckBox, area) {
-  if (allCheckBox.tagName !== "INPUT" || allCheckBox.type !== "checkbox")
-    return;
+  if (allCheckBox.tagName !== "INPUT" || allCheckBox.type !== "checkbox") return;
   allCheckBox.addEventListener("change", function (e) {
     const checkBox = e.target;
-    area
-      .querySelectorAll("input[type=checkbox]")
-      .forEach((cb) => (cb.checked = checkBox.checked));
+    area.querySelectorAll("input[type=checkbox]").forEach((cb) => (cb.checked = checkBox.checked));
   });
 
   area.addEventListener("change", function (e) {
     const checkBox = e.target;
     if (checkBox.tagName !== "INPUT" || checkBox.type !== "checkbox") return;
 
-    allCheckBox.checked =
-      checkBox.checked &&
-      Array.from(area.querySelectorAll("input[type=checkbox]")).every(
-        (cb) => cb.checked
-      );
+    allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll("input[type=checkbox]")).every((cb) => cb.checked);
   });
 }
 

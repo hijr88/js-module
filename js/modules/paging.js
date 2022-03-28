@@ -10,15 +10,7 @@ import { isEnterExec, toQueryString } from "./common";
  * @param {function} customPagination   커스텀 페이징 버튼
  * @return {Object}
  */
-export default function paging({
-  search,
-  findPage,
-  printList,
-  usePagination = true,
-  pageSize = 20,
-  pageRange = 10,
-  customPagination = undefined,
-}) {
+export default function paging({ search, findPage, printList, usePagination = true, pageSize = 20, pageRange = 10, customPagination = undefined }) {
   if (search === undefined) throw "require search";
   if (findPage === undefined) throw "require findPage";
   if (printList === undefined) throw "requirePrintList";
@@ -164,14 +156,9 @@ export default function paging({
                     </li>`;
         list.insertAdjacentHTML("beforeend", html);
         if (startNum + i !== page.number) {
-          list.lastElementChild.addEventListener(
-            "click",
-            goPage.bind(null, startNum + i, true)
-          );
+          list.lastElementChild.addEventListener("click", goPage.bind(null, startNum + i, true));
         } else {
-          list.lastElementChild.addEventListener("click", (e) =>
-            e.preventDefault()
-          );
+          list.lastElementChild.addEventListener("click", (e) => e.preventDefault());
         }
       }
     };
@@ -182,18 +169,10 @@ export default function paging({
    */
   (function setEvent() {
     //초기화버튼
-    search.el
-      .querySelector("[data-action=init]")
-      ?.addEventListener("click", init);
+    search.el.querySelector("[data-action=init]")?.addEventListener("click", init);
     //검색버튼
-    search.el
-      .querySelector("[data-action=search]")
-      ?.addEventListener("click", goSearch);
-    search
-      .getTags("input", "text")
-      .forEach((f) =>
-        f.addEventListener("keypress", (e) => isEnterExec(e, goSearch))
-      );
+    search.el.querySelector("[data-action=search]")?.addEventListener("click", goSearch);
+    search.getTags("input", "text").forEach((f) => f.addEventListener("keypress", (e) => isEnterExec(e, goSearch)));
   })();
 
   return {
