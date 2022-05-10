@@ -17,7 +17,6 @@ export default function paging({ search, findPage, printList, usePagination = tr
 
   //화면 초기화
   function init() {
-    search.init();
     goSearch(1);
   }
 
@@ -164,15 +163,12 @@ export default function paging({ search, findPage, printList, usePagination = tr
     };
   })();
 
-  /**
-   * 검색테이블 이벤트 설정
-   */
+  //검색테이블 이벤트 설정
   (function setEvent() {
     //초기화버튼
-    search.el.querySelector("[data-action=init]")?.addEventListener("click", init);
+    search.form.addEventListener("reset", init);
     //검색버튼
-    search.el.querySelector("[data-action=search]")?.addEventListener("click", goSearch);
-    search.getTags("input", "text").forEach((f) => f.addEventListener("keypress", (e) => isEnterExec(e, goSearch)));
+    search.form.addEventListener("submit", goSearch);
   })();
 
   return {
