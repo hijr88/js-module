@@ -138,14 +138,16 @@ export function datePicker({
   if (pairId != null) options["id"] = pairId;
 
   const datepicker = _datepicker(selector, options);
-  pickerAddEvent(datepicker);
+  pickerAddEvent(datepicker, options);
 
   return datepicker;
 }
 
-function pickerAddEvent(picker) {
+function pickerAddEvent(picker, options) {
   const el = picker.el;
-  el.addEventListener("initDate", () => picker.setDate(options.dateSelected));
+  el.addEventListener("initDate", () => {
+    picker.setDate(options.dateSelected);
+  });
   el.addEventListener("updateDate", () => {
     try {
       picker.setDate(parseDate(el.value));
@@ -193,7 +195,7 @@ export function monthPicker({
   if (pairId != null) options["id"] = pairId;
 
   const datepicker = _datepicker(selector, options);
-  pickerAddEvent(datepicker);
+  pickerAddEvent(datepicker, options);
 
   return datepicker;
 }

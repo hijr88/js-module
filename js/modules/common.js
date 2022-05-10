@@ -1,10 +1,6 @@
 //공통적으로 사용될만한 함수 모음
 import { isEmpty, isEnter, isObjectLiteral, isNumber } from "./validator";
 
-/**
- *  인자가 문자열인 경우 엘리먼트로 리턴
- * @param {HTMLElement || string} selectorOrElement         시작 el 위치
- */
 export function parseElement(selectorOrElement) {
   let el = selectorOrElement;
   if (el instanceof HTMLElement) return el;
@@ -47,6 +43,8 @@ export function openPopup(pop, showDark = true) {
   pop.style.top = "50%";
   pop.style.left = "50%";
   pop.style.zIndex = "999";
+
+  document.body.style.overflowY = "hidden";
 }
 
 /**
@@ -72,6 +70,8 @@ export function closePopup(pop, clear = false, hideDark = true) {
     } else if (el.type === "select-one") el.options[0].selected = true;
     else if (el.type === "textarea") el.value = "";
   });
+
+  document.body.style.overflowY = "";
 }
 
 /**
@@ -262,4 +262,12 @@ export function findHasKeyObject(object, key) {
       if (res) return res;
     }
   }
+}
+
+export function delay(delayInMs) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(2);
+    }, delayInMs);
+  });
 }
