@@ -1,42 +1,38 @@
 /**
- * 검색기능 함수
- * 매번 검색 화면 만들때마다 비슷한거 만들기 귀찮아서 만듬.
- * @param {HTMLElement} searchArea 검색 필드가 모두 포함된 부모 엘리먼트
- * @param {string}  attrName   필드에 포함 될 데이터 속성 키, 기본값 data-name
+ * 검색폼 관리
+ * @param {HTMLFormElement} form 필드가 모두 포함된 form
  */
-export default function search(searchArea, attrName = "data-name") {
-  const f = Array.from(searchArea.querySelectorAll("[data-name]")).reduce((obj, el) => {
-    const name = el.getAttribute(attrName);
-    if (el.type === "radio") {
-      if (Array.isArray(obj[name])) {
-        obj[name].push(el);
-      } else {
-        obj[name] = [el];
-      }
-    } else {
-      if (obj.hasOwnProperty(name)) throw `${attrName}=${name} duplicate`;
-      obj[name] = el;
-    }
-    return obj;
-  }, {});
+export default function search(form) {
   const dateNames = ["date", "beginDate", "startDate", "endDate"];
-  let cashedData = null;
+  let cachedData = null;
+
+  //필드 수집
+  const f = Array.from(form.querySelectorAll("[name]")).reduce((map, el) => {
+    const name = el.name;
+    if (el.type === "radio") {
+      Array.isArray(map.get(name)) ? map.get(name).push(el) : map.set(name, [el]);
+    } else {
+      if (map.has(name)) throw `name=${name} duplicate`;
+      map.set(name, el);
+    }
+    return map;
+  }, new Map());
 
   /** 검색창 초기화 */
   function initValue() {
-    for (const [name, element] of Object.entries(f)) {
+    for (const [name, element] of f) {
       if (Array.isArray(element)) {
         element[0].checked = true;
       } else if (dateNames.includes(name)) {
         element.dispatchEvent(new Event("initDate"));
       } else {
         element.value = "";
-        if (element.tagName === "SELECT") {
+        if (element.nodeName === "SELECT") {
           validSelect(element);
         }
       }
     }
-    cashedData = null;
+    cachedData = null;
   }
 
   /**
@@ -45,71 +41,35 @@ export default function search(searchArea, attrName = "data-name") {
    * @return {HTMLElement || Array[HTMLElement]} 엘리먼트, 라디오는 배열
    */
   function getField(name) {
-    return f[name];
+    return f.get(name);
   }
 
   /**
-   * 검색 필드중 tagName과 같은 엘리먼트 리턴
-   * 대소문자 구별 안함
-   * @param {string} tagName 태그 이름
-   * @param {string} typeName  타입
-   * @return {Array}
-   */
-  function getTags(tagName, typeName = undefined) {
-    let tags = [];
-    tagName = tagName.toUpperCase();
-    typeName = typeName?.toUpperCase();
-
-    for (const element of Object.values(f)) {
-      if (Array.isArray(element) && tagName === "INPUT") {
-        if (typeName) {
-          if (typeName === "RADIO") {
-            tags = [...tags, ...element];
-          }
-        } else {
-          tags = [...tags, ...element];
-        }
-      } else {
-        if (element.tagName === tagName) {
-          if (typeName) {
-            if (typeName === element.type.toUpperCase()) {
-              tags.push(element);
-            }
-          } else {
-            tags.push(element);
-          }
-        }
-      }
-    }
-    return tags;
-  }
-
-  /**
-   * attrName 값을 키로 실제 값을 Object 담아 리턴
+   * 속성 값을 키로 실제 값을 Object 담아 리턴
    * @param create {boolean} true 새로운값 리턴, false 기존값 리턴
    * @returns {Object}
    */
   function getData(create = false) {
-    if (create === false && cashedData) {
-      return Object.assign({}, cashedData);
+    if (create === false && cachedData) {
+      return { ...cachedData };
     }
 
     const newData = {};
-    for (const [name, element] of Object.entries(f)) {
+    for (const [name, element] of f) {
       if (Array.isArray(element)) {
         const checkedRadio = element.find((input) => input.checked);
         newData[name] = checkedRadio.value.trim();
       } else {
-        //data-value가 존재하는 경우 select의 값은 value가 아닌 data-value에 담긴 키로 조회
-        if (element.tagName === "SELECT" && element.getAttribute("data-value") != null) {
-          const key = element.getAttribute("data-value");
+        //data-name 존재하는 경우 select의 값은 value가 아닌 data-name에 담긴 키로 조회
+        if (element.nodeName === "SELECT" && element.getAttribute("data-name") != null) {
+          const key = element.getAttribute("data-name");
           newData[name] = element.querySelector("option:checked").getAttribute(key);
         } else {
           newData[name] = element.value.trim();
         }
       }
     }
-    cashedData = Object.assign({}, newData);
+    cachedData = Object.assign({}, newData);
     return newData;
   }
 
@@ -118,19 +78,14 @@ export default function search(searchArea, attrName = "data-name") {
    * @param obj
    */
   function setData(obj) {
-    for (const [name, element] of Object.entries(f)) {
+    for (const [name, element] of f) {
       if (obj.hasOwnProperty(name) === false) continue;
 
       if (Array.isArray(element)) {
-        for (const radio of element) {
-          if (radio.value === obj[name]) {
-            radio.checked = true;
-            break;
-          }
-        }
+        element.find((radio) => radio.value === obj[name]).checked = true;
       } else {
-        if (element.tagName === "SELECT" && element.getAttribute("data-value") != null) {
-          const key = element.getAttribute("data-value");
+        if (element.nodeName === "SELECT" && element.getAttribute("data-name") != null) {
+          const key = element.getAttribute("data-name");
           const option = element.querySelector(`option[${key}="${obj[name]}"]`);
           if (option) option.selected = true;
         } else {
@@ -142,7 +97,7 @@ export default function search(searchArea, attrName = "data-name") {
           }
         }
 
-        if (element.tagName === "SELECT") {
+        if (element.nodeName === "SELECT") {
           validSelect(element);
         }
       }
@@ -156,12 +111,20 @@ export default function search(searchArea, attrName = "data-name") {
     }
   }
 
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+  });
+
+  form.addEventListener("reset", (e) => {
+    e.preventDefault();
+    initValue();
+  });
+
   return {
     init: initValue,
     get: getField,
-    getTags: getTags,
     data: getData,
     setData: setData,
-    el: searchArea,
+    form: form,
   };
 }
