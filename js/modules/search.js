@@ -1,13 +1,17 @@
 /**
  * 검색폼 관리
- * @param {HTMLFormElement} form 필드가 모두 포함된 form
+ * 검색값에 포함 되려면 name 속성이 반드시 있어야 함.
  */
 export default function search(form) {
+  if (!(form instanceof HTMLFormElement)) {
+    throw "Only HTMLFormElement allow";
+  }
+
   const dateNames = ["date", "beginDate", "startDate", "endDate"];
   let cachedData = null;
 
   //필드 수집
-  const f = Array.from(form.querySelectorAll("[name]")).reduce((map, el) => {
+  const f = Array.from(form.querySelectorAll("input[name], select[name]")).reduce((map, el) => {
     const name = el.name;
     if (el.type === "radio") {
       Array.isArray(map.get(name)) ? map.get(name).push(el) : map.set(name, [el]);
@@ -18,96 +22,80 @@ export default function search(form) {
     return map;
   }, new Map());
 
-  /** 검색창 초기화 */
-  function initValue() {
-    for (const [name, element] of f) {
-      if (Array.isArray(element)) {
-        element[0].checked = true;
-      } else if (dateNames.includes(name)) {
-        element.dispatchEvent(new Event("initDate"));
-      } else {
-        element.value = "";
-        if (element.nodeName === "SELECT") {
-          validSelect(element);
-        }
-      }
-    }
+  //검색창 초기화
+  function reset() {
+    form.reset();
     cachedData = null;
   }
 
   /**
-   * name에 해당하는 값 리턴
+   * name에 해당하는 element 리턴
    * @param {string} name 필드 name
-   * @return {HTMLElement || Array[HTMLElement]} 엘리먼트, 라디오는 배열
+   * @return {HTMLElement || Array[HTMLElement] || null} 엘리먼트, 라디오는 배열
    */
   function getField(name) {
     return f.get(name);
   }
 
+  function getValue(name) {
+    const element = getField(name);
+
+    if (Array.isArray(element)) {
+      const checkedRadio = element.find((input) => input.checked);
+      return checkedRadio ? checkedRadio.value.trim() : "";
+    } else if (element.type === "checkbox") {
+      return element.checked ? element.value.trim() : "";
+    } else {
+      return element.value.trim();
+    }
+  }
+
   /**
-   * 속성 값을 키로 실제 값을 Object 담아 리턴
-   * @param create {boolean} true 새로운값 리턴, false 기존값 리턴
+   * {name:value} 리턴
+   * @param useCache {boolean} true 최근값 리턴, false 새로운값 리턴
    * @returns {Object}
    */
-  function getData(create = false) {
-    if (create === false && cachedData) {
+  function getData(useCache = false) {
+    if (useCache && cachedData) {
       return { ...cachedData };
     }
 
     const newData = {};
-    for (const [name, element] of f) {
-      if (Array.isArray(element)) {
-        const checkedRadio = element.find((input) => input.checked);
-        newData[name] = checkedRadio.value.trim();
-      } else {
-        //data-name 존재하는 경우 select의 값은 value가 아닌 data-name에 담긴 키로 조회
-        if (element.nodeName === "SELECT" && element.getAttribute("data-name") != null) {
-          const key = element.getAttribute("data-name");
-          newData[name] = element.querySelector("option:checked").getAttribute(key);
-        } else {
-          newData[name] = element.value.trim();
-        }
-      }
+    for (const name of f.keys()) {
+      newData[name] = getValue(name);
     }
     cachedData = Object.assign({}, newData);
     return newData;
   }
 
-  /**
-   * 검색창 데이터 채우기
-   * @param obj
-   */
-  function setData(obj) {
-    for (const [name, element] of f) {
-      if (obj.hasOwnProperty(name) === false) continue;
+  function setValue(name, value) {
+    const element = getField(name);
 
-      if (Array.isArray(element)) {
-        element.find((radio) => radio.value === obj[name]).checked = true;
-      } else {
-        if (element.nodeName === "SELECT" && element.getAttribute("data-name") != null) {
-          const key = element.getAttribute("data-name");
-          const option = element.querySelector(`option[${key}="${obj[name]}"]`);
-          if (option) option.selected = true;
-        } else {
-          element.value = obj[name];
+    if (Array.isArray(element)) {
+      const radio = element.find((radio) => radio.value === value);
+      if (radio != null) radio.checked = true;
+    } else if (element.type === "checkbox") {
+      element.checked = element.value === value;
+    } else {
+      element.value = value;
 
-          //date 세팅
-          if (dateNames.includes(name)) {
-            element.dispatchEvent(new Event("updateDate"));
-          }
-        }
+      //date 세팅
+      if (dateNames.includes(name)) {
+        element.dispatchEvent(new Event("updateDate"));
+      }
 
-        if (element.nodeName === "SELECT") {
-          validSelect(element);
-        }
+      if (element.nodeName === "SELECT" && element.selectedIndex === -1) {
+        element.selectedIndex = 0;
       }
     }
   }
 
-  //select 값이 존재하지 않은경우 첫번째 값으로
-  function validSelect(select) {
-    if (select.selectedIndex === -1) {
-      select.selectedIndex = 0;
+  //검색창 데이터 채우기
+  function setData(obj) {
+    for (const name of f.keys()) {
+      if (obj.hasOwnProperty(name) === false) continue;
+
+      setValue(name, obj[name]);
     }
   }
 
@@ -115,16 +103,7 @@ export default function search(form) {
     e.preventDefault();
   });
 
-  form.addEventListener("reset", (e) => {
-    e.preventDefault();
-    initValue();
-  });
+  form.addEventListener("reset", reset);
 
-  return {
-    init: initValue,
-    get: getField,
-    data: getData,
-    setData: setData,
-    form: form,
-  };
+  return { form, reset, getField, getValue, setValue, getData, setData };
 }
