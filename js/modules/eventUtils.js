@@ -1,5 +1,4 @@
 //공통적으로 사용될만한 이벤트 모음
-
 import { isNumber } from "@modules/validator";
 
 /**
@@ -122,23 +121,32 @@ export function inputOnlyNumber(input, allowPoint = false) {
   input.addEventListener("input", onInput);
 }
 
-/**
- * allCheckBox 변하면 area에 있는 모든 checkBox도 같이 변하기
- * @param {HTMLInputElement & checkbox} allCheckBox 이벤트 추가할 checkBox
- * @param area 변할 체크박스가 포함된 영역
- */
-export function changeAllCheckBox(allCheckBox, area) {
-  if (allCheckBox.tagName !== "INPUT" || allCheckBox.type !== "checkbox") return;
-  allCheckBox.addEventListener("change", function (e) {
-    const checkBox = e.target;
-    area.querySelectorAll("input[type=checkbox]").forEach((cb) => (cb.checked = checkBox.checked));
+export function tableCheckboxEvent(table) {
+  if (table.querySelector("thead input[type=checkbox]") == null) return;
+
+  //thead 이벤트
+  table.querySelector("thead").addEventListener("input", (e) => {
+    if (e.target.type !== "checkbox") return;
+    const ck = e.target;
+    const bool = ck.checked;
+
+    const th = ck.closest("td, th");
+    const colNum = Array.from(th.closest("tr").children).findIndex((c) => c === th) + 1;
+
+    Array.from(table.querySelectorAll(`tbody tr td:nth-child(${colNum}) input[type=checkbox]`)).forEach((c) => (c.checked = bool));
   });
 
-  area.addEventListener("change", function (e) {
-    const checkBox = e.target;
-    if (checkBox.tagName !== "INPUT" || checkBox.type !== "checkbox") return;
+  //tbody 이벤트
+  table.querySelector("tbody").addEventListener("input", (e) => {
+    if (e.target.type !== "checkbox") return;
 
-    allCheckBox.checked = checkBox.checked && Array.from(area.querySelectorAll("input[type=checkbox]")).every((cb) => cb.checked);
+    const ck = e.target;
+    const td = ck.closest("td, th");
+    const colNum = Array.from(td.closest("tr").children).findIndex((c) => c === td) + 1;
+
+    table.querySelector(`thead tr :nth-child(${colNum}) input[type=checkbox]`).checked = Array.from(
+      table.querySelectorAll(`tbody tr td:nth-child(${colNum}) input[type=checkbox]`)
+    ).every((c) => c.checked);
   });
 }
 

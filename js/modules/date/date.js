@@ -1,7 +1,7 @@
+import _datepicker from "./datepicker";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import "events-polyfill";
-import _datepicker from "./datepicker";
 
 dayjs.extend(customParseFormat);
 

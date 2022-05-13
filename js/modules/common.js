@@ -1,5 +1,5 @@
 //공통적으로 사용될만한 함수 모음
-import { isEmpty, isEnter, isObjectLiteral, isNumber } from "./validator";
+import { isEmpty, isEnter, isNumber, isObjectLiteral } from "./validator";
 
 export function parseElement(selectorOrElement) {
   let el = selectorOrElement;
@@ -42,7 +42,7 @@ export function openPopup(pop, showDark = true) {
   pop.style.marginLeft = `-${pop.offsetWidth / 2}px`;
   pop.style.top = "50%";
   pop.style.left = "50%";
-  pop.style.zIndex = "999";
+  pop.style.zIndex = "8";
 
   document.body.style.overflowY = "hidden";
 }
@@ -270,4 +270,10 @@ export function delay(delayInMs) {
       resolve(2);
     }, delayInMs);
   });
+}
+
+export function createElement(str) {
+  const div = document.createElement("div");
+  div.innerHTML = str.trim();
+  return div.firstElementChild;
 }

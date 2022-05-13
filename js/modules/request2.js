@@ -34,7 +34,7 @@ request.interceptors.response.use(
     console.log(config);
     const data = response.data;
     if (data) {
-      console.log("data:", data);
+      console.log("response:", data);
     }
 
     if (data["resultCd"] !== "0") {

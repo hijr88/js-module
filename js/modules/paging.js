@@ -99,7 +99,7 @@ export default function paging({ search, findPage, printList, usePagination = tr
   /**
    * @param {boolean} useCachedCount
    */
-  function reload(useCachedCount = true) {
+  function reload(useCachedCount = false) {
     goPage(0, useCachedCount);
   }
 
