@@ -145,9 +145,7 @@ export function datePicker({
 
 function pickerAddEvent(picker, options) {
   const el = picker.el;
-  el.addEventListener("initDate", () => {
-    picker.setDate(options.dateSelected);
-  });
+  el.defaultValue = options.formatter(el, options.dateSelected);
   el.addEventListener("updateDate", () => {
     try {
       picker.setDate(parseDate(el.value));
