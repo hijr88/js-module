@@ -1,5 +1,28 @@
 import axios from "axios";
 
+const color = (() => {
+  const base = "font-weight: bold; padding: 3px 7px 3px 7px; border-radius: 3px 3px 3px 3px;";
+  const red = base + "background-color: #e0005a; color: #fff;";
+  const orange = base + "background-color: #fb923c; color: #fff;";
+  const yellow = base + "background-color: gold; color: black;";
+  const sky = base + "background-color: #c8ebff; color: black;";
+  const purple = base + "background-color: #c084fc; color: #fff;";
+
+  function random() {
+    const array = Object.values(this).filter((k) => typeof k === "string");
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  return {
+    red,
+    orange,
+    yellow,
+    sky,
+    purple,
+    random,
+  };
+})();
+
 const request = axios.create({
   headers: {
     Accept: "application/json",
@@ -9,6 +32,8 @@ const request = axios.create({
 
 request.interceptors.request.use(
   (config) => {
+    if (config.beforeMethod) {}
+
     console.log(`method:${config.method}  url: ${config.url}`);
 
     if (config.headers["Content-Type"] === "application/x-www-form-urlencoded") {
@@ -34,7 +59,7 @@ request.interceptors.response.use(
     console.log(config);
     const data = response.data;
     if (data) {
-      console.log("response:", data);
+      console.log("%cresponse:", color.random(), data);
     }
 
     if (data["resultCd"] !== "0") {
