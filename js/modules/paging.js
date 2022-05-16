@@ -1,61 +1,40 @@
-import { isEnterExec, toQueryString } from "./common";
+import { toQueryString } from "./common";
+import { isInteger } from "./validator";
 
 /**
- * @param {Object}   search             모듈에 있는 search 구현한것
+ * @param {Object}   search             모듈에 있는 search 리턴 값
  * @param {function} findPage           리스트 불러올 함수
  * @param {function} printList          리스트 그릴 함수
  * @param {boolean} usePagination      페이징버튼 사용유무
  * @param {Number} pageSize           페이지 리스트 개수
  * @param {Number} pageRange          페이징 버튼 범위
  * @param {function} customPagination   커스텀 페이징 버튼
- * @return {Object}
  */
 export default function paging({ search, findPage, printList, usePagination = true, pageSize = 20, pageRange = 10, customPagination = undefined }) {
   if (search === undefined) throw "require search";
-  if (findPage === undefined) throw "require findPage";
-  if (printList === undefined) throw "requirePrintList";
+  if (findPage === undefined) throw "require findPage()";
+  if (printList === undefined) throw "require printList()";
 
-  //화면 초기화
+  //페이징 초기화
   function init() {
     goSearch(1);
   }
 
-  /**
-   * @param e click 이벤트 또는 페이지 번호
-   */
-  function goSearch(e = undefined) {
-    const params = search.data(true);
-
-    if (e instanceof Event) {
-      e.preventDefault();
-      goPage.bind(params, 1, false)();
-    } else if (typeof e === "number") {
-      goPage.bind(params, e, false)();
-    } else if (typeof e === "string") {
-      const n = Number.parseInt(Number(e).toString());
-      if (Number.isNaN(n) || n <= 0) {
-        goPage.bind(params, 1, false)();
-      } else {
-        goPage.bind(params, n, false)();
-      }
-    } else {
-      goPage.bind(params, 1, false)();
-    }
+  //페이지 번호
+  function goSearch(num = 1) {
+    num = !isInteger(num) ? 1 : Number(num) <= 0 ? 1 : Number(num);
+    goPage(num, false, false);
   }
 
   const { goPage, getPageNumber } = (() => {
-    let cachedCount = undefined;
+    let cachedCount = null;
     let cachedPageNumber = 1;
 
     return {
-      goPage: async function (pageNumber = 1, useCachedCount = true, e) {
-        if (e instanceof Event) {
-          e.preventDefault();
-        }
+      goPage: async function (pageNumber = 1, useCacheParam = false, useCachedCount = false) {
+        const params = search.getData(useCacheParam);
 
-        const params = this ?? search.data(false);
-
-        if (useCachedCount === true && cachedCount !== undefined) {
+        if (useCachedCount && cachedCount != null) {
           params.cachedCount = cachedCount;
         }
 
@@ -71,14 +50,12 @@ export default function paging({ search, findPage, printList, usePagination = tr
         const page = await findPage(params);
         cachedCount = page["totalElements"];
 
-        history.replaceState(null, null, "?" + toQueryString(getPageInfo()));
-
         printList(page);
         if (usePagination === true) {
           if (customPagination) {
-            customPagination(page, pageRange);
+            customPagination(page, pageRange, (n) => goPage(n, true, true), getInfo);
           } else {
-            printButton(page, pageRange);
+            defaultPrintButton(page, pageRange);
           }
         }
       },
@@ -88,9 +65,9 @@ export default function paging({ search, findPage, printList, usePagination = tr
     };
   })();
 
-  /** 검색값이랑 페이징 정보 포함해서 리턴 */
-  function getPageInfo() {
-    return Object.assign(search.data(), {
+  //검색값이랑 페이징 정보 포함해서 리턴
+  function getInfo() {
+    return Object.assign(search.getData(true), {
       pageNumber: getPageNumber(),
       pageSize: pageSize,
     });
@@ -108,17 +85,25 @@ export default function paging({ search, findPage, printList, usePagination = tr
    * @param page {Object}     서버에서 응답한 페이지객체
    * @param size {Number}     페이징 버튼 개수
    */
-  const printButton = (() => {
-    const div = document.querySelector("div#pagination");
-    const left = div.querySelector(".pageLeft");
-    const list = div.querySelector(".pageList");
-    const right = div.querySelector(".pageRight");
+  const defaultPrintButton = (() => {
+    if (!usePagination || customPagination) return;
+
+    const wrap = document.querySelector("#pagination");
+    const left = wrap.querySelector(".pageLeft");
+    const list = wrap.querySelector(".pageList");
+    const right = wrap.querySelector(".pageRight");
 
     let previousNumber, nextNumber, maxNumber;
 
+    wrap.addEventListener("click", (e) => e.preventDefault());
+
     function go(num, e) {
-      e.preventDefault();
-      goPage.bind(null, num, true)();
+      if (e) {
+        const a = e.target.closest("a");
+        if (!a) return;
+        history.pushState({ pageNumber: num }, null, a.href);
+      }
+      goPage(num, true, true);
     }
 
     left.children[0].addEventListener("click", (e) => go(1, e));
@@ -127,54 +112,71 @@ export default function paging({ search, findPage, printList, usePagination = tr
     right.children[0].addEventListener("click", (e) => go(nextNumber, e));
     right.children[1].addEventListener("click", (e) => go(maxNumber, e));
 
+    list.addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (!li || li.classList.contains("on")) return;
+
+      history.pushState({ pageNumber: li.dataset.num }, null, li.querySelector("a").href);
+      go(li.dataset.num);
+    });
+
+    window.addEventListener("popstate", (e) => {
+      go(e.state?.pageNumber);
+    });
+
     return function (page, size = 10) {
+      const params = getInfo();
       const startNum = page.number - ((page.number - 1) % size);
 
+      //이전버튼
       if (page.number > size) {
-        //이전버튼
         previousNumber = page.number - size;
+        left.children[0].href = `${location.pathname}?${toQueryString({ ...params, pageNumber: 1 })}`;
+        left.children[1].href = `${location.pathname}?${toQueryString({ ...params, pageNumber: previousNumber })}`;
         left.style.display = "";
       } else {
         left.style.display = "none";
       }
 
+      //다음버튼
       if (startNum + size <= page["totalPages"]) {
-        //다음버튼
         nextNumber = startNum + size;
+        right.children[0].href = `${location.pathname}?${toQueryString({ ...params, pageNumber: nextNumber })}`;
         maxNumber = page["totalPages"];
+        right.children[1].href = `${location.pathname}?${toQueryString({ ...params, pageNumber: maxNumber })}`;
         right.style.display = "";
       } else {
         right.style.display = "none";
       }
 
-      list.innerHTML = "";
+      let html = "";
       for (let i = 0; startNum + i <= page["totalPages"] && i < size; i++) {
-        const html = `
-                    <li class="${startNum + i === page.number ? "on" : ""}">
-                        <a href="${location.pathname}">${startNum + i}</a>
-                    </li>`;
-        list.insertAdjacentHTML("beforeend", html);
-        if (startNum + i !== page.number) {
-          list.lastElementChild.addEventListener("click", goPage.bind(null, startNum + i, true));
-        } else {
-          list.lastElementChild.addEventListener("click", (e) => e.preventDefault());
-        }
+        params.pageNumber = startNum + i;
+
+        html += `
+          <li class="${startNum + i === page.number ? "on" : ""} cursor-pointer" data-num="${params.pageNumber}">
+              <a href="${location.pathname}?${toQueryString(params)}">${startNum + i}</a>
+          </li>`;
       }
+      list.innerHTML = html;
     };
   })();
 
   //검색테이블 이벤트 설정
   (function setEvent() {
     //초기화버튼
-    search.form.addEventListener("reset", init);
+    search.form.addEventListener("reset", () => {
+      setTimeout(function () {
+        init();
+      }, 1);
+    });
     //검색버튼
     search.form.addEventListener("submit", goSearch);
   })();
 
   return {
     init: init,
-    goPage: goPage,
-    info: getPageInfo,
+    info: getInfo,
     goSearch: goSearch,
     reload: reload,
   };
