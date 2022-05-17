@@ -1,3 +1,5 @@
+import { isEmpty } from "./validator";
+
 /**
  * 검색폼 관리
  * 검색값에 포함 되려면 name 속성이 반드시 있어야 함.
@@ -92,6 +94,10 @@ export default function search(form) {
 
   //검색창 데이터 채우기
   function setData(obj) {
+    if (isEmpty(obj)) {
+      reset();
+      return;
+    }
     for (const name of f.keys()) {
       if (obj.hasOwnProperty(name) === false) continue;
 
@@ -105,5 +111,5 @@ export default function search(form) {
 
   form.addEventListener("reset", reset);
 
-  return { form, reset, getField, getValue, setValue, getData, setData };
+  return { form: form, reset: reset, getField: getField, getValue: getValue, setValue: setValue, getData: getData, setData: setData };
 }

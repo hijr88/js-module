@@ -1,5 +1,5 @@
-import { toQueryString } from "./common";
-import { isInteger } from "./validator";
+import { getUrlParams, toQueryString } from "./common";
+import { isEmpty, isInteger } from "./validator";
 
 /**
  * @param {Object}   search             모듈에 있는 search 리턴 값
@@ -23,7 +23,7 @@ export default function paging({ search, findPage, printList, usePagination = tr
   //페이지 번호
   function goSearch(num = 1) {
     num = !isInteger(num) ? 1 : Number(num) <= 0 ? 1 : Number(num);
-    goPage(num, false, false);
+    goPage(num);
   }
 
   const { goPage, getPageNumber } = (() => {
@@ -73,11 +73,8 @@ export default function paging({ search, findPage, printList, usePagination = tr
     });
   }
 
-  /**
-   * @param {boolean} useCachedCount
-   */
   function reload(useCachedCount = false) {
-    goPage(0, useCachedCount);
+    goPage(0, true, useCachedCount);
   }
 
   /**
@@ -97,31 +94,23 @@ export default function paging({ search, findPage, printList, usePagination = tr
 
     wrap.addEventListener("click", (e) => e.preventDefault());
 
-    function go(num, e) {
-      if (e) {
-        const a = e.target.closest("a");
-        if (!a) return;
-        history.pushState({ pageNumber: num }, null, a.href);
-      }
+    function go(num) {
+      const newInfo = { ...getInfo(), pageNumber: Number(num) };
+      history.pushState({ page: newInfo }, null, "?" + toQueryString(newInfo));
       goPage(num, true, true);
     }
 
-    left.children[0].addEventListener("click", (e) => go(1, e));
-    left.children[1].addEventListener("click", (e) => go(previousNumber, e));
+    left.children[0].addEventListener("click", () => go(1));
+    left.children[1].addEventListener("click", () => go(previousNumber));
 
-    right.children[0].addEventListener("click", (e) => go(nextNumber, e));
-    right.children[1].addEventListener("click", (e) => go(maxNumber, e));
+    right.children[0].addEventListener("click", () => go(nextNumber));
+    right.children[1].addEventListener("click", () => go(maxNumber));
 
     list.addEventListener("click", (e) => {
       const li = e.target.closest("li");
       if (!li || li.classList.contains("on")) return;
 
-      history.pushState({ pageNumber: li.dataset.num }, null, li.querySelector("a").href);
       go(li.dataset.num);
-    });
-
-    window.addEventListener("popstate", (e) => {
-      go(e.state?.pageNumber);
     });
 
     return function (page, size = 10) {
@@ -166,18 +155,30 @@ export default function paging({ search, findPage, printList, usePagination = tr
   (function setEvent() {
     //초기화버튼
     search.form.addEventListener("reset", () => {
+      if (isEmpty(getUrlParams())) return;
+
       setTimeout(function () {
+        history.pushState(null, null, location.pathname);
         init();
       }, 1);
     });
     //검색버튼
-    search.form.addEventListener("submit", goSearch);
+    search.form.addEventListener("submit", () => {
+      search.getData(false);
+      history.pushState({ page: getInfo() }, null, "?" + toQueryString(getInfo()));
+      goPage(1, true);
+    });
+
+    window.addEventListener("popstate", (e) => {
+      const page = e.state?.page;
+      search.setData(page);
+      if (page) {
+        goSearch(page.pageNumber);
+      } else {
+        init();
+      }
+    });
   })();
 
-  return {
-    init: init,
-    info: getInfo,
-    goSearch: goSearch,
-    reload: reload,
-  };
+  return { init: init, info: getInfo, goSearch: goSearch, reload: reload };
 }
