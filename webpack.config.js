@@ -10,7 +10,7 @@ module.exports = () => {
       index: [jsDir + "/src/index.js"],
     },
     output: {
-      publicPath: "/",
+      publicPath: "/js/dist/",
       path: path.resolve(__dirname, jsDir + "/dist"),
       filename: "[name].js",
       clean: true,
