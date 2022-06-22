@@ -68,6 +68,8 @@ request.interceptors.response.use(
       else alert("예기치 못한 문제가 발생하였습니다.\n관리자에게 문의하시기 바랍니다.");
       throw "fail";
     }
+
+    if (config.afterMethod) {}
     return data;
   },
   (error) => {

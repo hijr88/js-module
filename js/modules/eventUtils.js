@@ -179,7 +179,7 @@ export function preventInput(input) {
 
 /**
  * 입력한 글자수만큼 (? / max) 숫자 변화 이벤트
- * .check-length가 붙은 element에 전부 이벤트 부여
+ * .check-length 붙은 element에 전부 이벤트 부여
  */
 export function fixedCheckLength(parentElement) {
   parentElement.querySelectorAll(".check-length").forEach((input) => {
@@ -209,8 +209,6 @@ export function fixedCheckLength(parentElement) {
  */
 export function flexibleCheckLength(parentElement) {
   parentElement.addEventListener("input", function (e) {
-    e.preventDefault();
-
     const target = e.target;
     if (!target.classList.contains("check-length")) return;
     const maxLength = target.maxLength;
