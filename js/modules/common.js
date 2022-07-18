@@ -57,6 +57,7 @@ export function closePopup(pop, clear = false, hideDark = true) {
   pop = parseElement(pop);
   if (hideDark) document.querySelector("#layerMask").style.display = "none";
   pop.style.display = "none";
+  document.body.style.overflowY = "";
 
   if (clear === false) return;
   const radioNames = [];
@@ -70,8 +71,6 @@ export function closePopup(pop, clear = false, hideDark = true) {
     } else if (el.type === "select-one") el.options[0].selected = true;
     else if (el.type === "textarea") el.value = "";
   });
-
-  document.body.style.overflowY = "";
 }
 
 /**
